@@ -145,20 +145,11 @@ function PandaAuth:ValidateKey(serviceID, Key)
     
         if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
             DebugText("Key is Authenticated")
-            if getgenv().CompatibleMode then
-                return true
-            else
-                local PremiumKey = PremiumKeyStatus(jsonTable.isPremium)
-                return true, PremiumKey, "authenticated"
-            end
+            return true
         else
             DebugText("Key is Not Authenticated")
             PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
-            if getgenv().CompatibleMode then 
-                return false
-            else  
-                return false, PremiumKey, "not_authenticated"
-            end
+            return false
         end
     end)
     
