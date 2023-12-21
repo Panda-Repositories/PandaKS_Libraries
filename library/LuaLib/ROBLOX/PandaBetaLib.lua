@@ -3,7 +3,7 @@ local PandaAuth = {}
 -- User Customizations
 
 getgenv().AllowLibNotification = true
-getgenv().CustomLogo = "5179834418"
+getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
 -- ( Experimental ) If this Method Set to false, Premium Key Identifier could be executed and requires additional modification to the
@@ -21,7 +21,7 @@ local players_service = cloneref(game:GetService("Players"))
 local server_configuration = "https://auth.pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "2.0.9b"
+local LibVersion = "2.1.0_alpha"
 warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 
 -- Validation Services
@@ -118,58 +118,50 @@ end
 
 
 function PandaAuth:ValidateKey(serviceID, Key)
-    local success, error_message = pcall(function()
-        local service_name = string.lower(serviceID)
-        local combined_url = validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name)
-        local response = game:HttpGet(combined_url) 
-        DebugText("Encrypted Data: "..response)
-    
-        local decryption = vigenereDecrypt(response, "PANDA_DEVELOPMENT")
-    
-        DebugText("Decrypted Data: "..decryption) 
-        local jsonTable, jsonError = http_service:JSONDecode(decryption)
+    local service_name = string.lower(serviceID)
+    local combined_url = validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name)
+    local response = game:HttpGet(combined_url) 
+    DebugText("Encrypted Data: "..response)
 
-        if not jsonTable then
-            error("JSON decoding error: " .. jsonError)
-        end
-    
-        local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
-        local hardwareid_auth = string.upper(PandaSHA256(service_name, GetHardwareID(service_name)))
-        DebugText("-----------------------------------------------------")
-        DebugText("---------------- [ Debug Summaries ] ----------------")
-        DebugText("-----------------------------------------------------")
-        DebugText("[ Server Status: "..jsonTable.STATUS)
-        DebugText("[ Client Status: "..uppercaseString)
-        DebugText("-----------------------------------------------------")
-        DebugText("------------- [ Hardware ID Summaries ] -------------")
-        DebugText("-----------------------------------------------------")
-        DebugText("(Server) Info: "..jsonTable.DEV_ID)
-        DebugText("(Client) Info: "..hardwareid_auth)
-        DebugText("-----------------------------------------------------")
-    
-        if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
-            DebugText("Key is Authenticated")
+    local decryption = vigenereDecrypt(response, "PANDA_DEVELOPMENT")
+
+    DebugText("Decrypted Data: "..decryption) 
+    local jsonTable = http_service:JSONDecode(decryption)
+
+    local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
+    local hardwareid_auth = string.upper(PandaSHA256(service_name, GetHardwareID(service_name)))
+    DebugText("-----------------------------------------------------")
+    DebugText("---------------- [ Debug Summaries ] ----------------")
+    DebugText("-----------------------------------------------------")
+    DebugText("[ Server Status: "..jsonTable.STATUS)
+    DebugText("[ Client Status: "..uppercaseString)
+    DebugText("-----------------------------------------------------")
+    DebugText("------------- [ Hardware ID Summaries ] -------------")
+    DebugText("-----------------------------------------------------")
+    DebugText("(Server) Info: "..jsonTable.DEV_ID)
+    DebugText("(Client) Info: "..hardwareid_auth)
+    DebugText("-----------------------------------------------------")
+
+
+
+    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
+        DebugText("----- Key is Authenticated -----")
+        if getgenv().CompatibleMode then
             return true
         else
-            DebugText("Key is Not Authenticated")
-            PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
-            return false
+            local PremiumKey = PremiumKeyStatus(jsonTable.isPremium)
+            return true, PremiumKey, "authenticated"
         end
-    end)
-    
-    if not success then
-        -- Handle the error here
-        print("An error occurred: " .. error_message)
-        starter_gui_service:SetCore("SendNotification", {
-            Title = "Key System ",
-            Text = error_message.." - [ "..identifyexecutor().." ]",
-            Duration = 20,
-            Icon = "rbxassetid://"..CustomLogo
-        })
-        return false
-    end    
+    else
+        DebugText("----- Key is Not Authenticated -----")
+        PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
+        if getgenv().CompatibleMode then 
+            return false
+        else  
+            return false, PremiumKey, "not_authenticated"
+        end
+    end
 end
-
 
 
 return PandaAuth
