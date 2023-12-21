@@ -127,7 +127,11 @@ function PandaAuth:ValidateKey(serviceID, Key)
         local decryption = vigenereDecrypt(response, "PANDA_DEVELOPMENT")
     
         DebugText("Decrypted Data: "..decryption) 
-        local jsonTable = http_service:JSONDecode(decryption)
+        local jsonTable, jsonError = http_service:JSONDecode(decryption)
+
+        if not jsonTable then
+            error("JSON decoding error: " .. jsonError)
+        end
     
         local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
         local hardwareid_auth = string.upper(PandaSHA256(service_name, GetHardwareID(service_name)))
@@ -159,11 +163,13 @@ function PandaAuth:ValidateKey(serviceID, Key)
         starter_gui_service:SetCore("SendNotification", {
             Title = "Key System ",
             Text = error_message.." - [ "..identifyexecutor().." ]",
-            Duration = 10,
+            Duration = 20,
             Icon = "rbxassetid://"..CustomLogo
         })
+        return false
     end    
 end
+
 
 
 return PandaAuth
