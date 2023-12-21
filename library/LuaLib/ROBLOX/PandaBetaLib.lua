@@ -11,7 +11,6 @@ getgenv().DebugMode = false
 getgenv().CompatibleMode = true
 
 -- Roblox Lua Services
-
 local http_service = cloneref(game:GetService("HttpService"))
 local rbx_analytics_service = cloneref(game:GetService("RbxAnalyticsService"))
 local starter_gui_service = cloneref(game:GetService("StarterGui"))
@@ -23,7 +22,6 @@ local server_configuration = "https://auth.pandadevelopment.net"
 -- Lua Lib Version
 local LibVersion = "2.1.0_alpha"
 warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
-
 -- Validation Services
 local validation_service = server_configuration.. "/validate"
 
@@ -49,7 +47,7 @@ local function GetHardwareID(service)
         elseif jsonData.AuthMode == "iponly" then       
             return jsonData.IPToken
         else
-            return client_id
+            return players_service.LocalPlayer.UserId
         end
 end
 
@@ -73,7 +71,7 @@ end
 
 -- SHA256 Hashing Serverside Algorithm
 local function PandaSHA256(service, stringbrub)
-    DebugText("[+] Command Hashing: ".. stringbrub)
+    -- DebugText("[+] Command Hashing: ".. stringbrub)
     local hashed = game:HttpGet(server_configuration ..  "/serviceapi?service=" .. service .. "&command=hashed&param="..stringbrub)
     return hashed
 end
@@ -81,11 +79,7 @@ end
 -- Premium Key Value
 local function PremiumKeyStatus(brub)
     DebugText("[+] Premium Key: ".. brub)
-    if brub ==  string.upper(PandaSHA256(service_name, "the key is premium")) then
-        return true
-    else
-        return false
-    end
+    return brub ==  string.upper(PandaSHA256(service_name, "the key is premium")) 
 end
 
 local function vigenereDecrypt(ciphertext, key)
@@ -95,20 +89,13 @@ local function vigenereDecrypt(ciphertext, key)
     for i = 1, #ciphertext do
         local char = ciphertext:sub(i, i)
         local keyChar = key:sub(keyIndex, keyIndex)
-
-        -- Check if the character is a letter
         if char:match("%a") then
             local charCode = char:byte()
             local keyCharCode = keyChar:byte()
-
-            -- Perform decryption
             local decryptedCharCode = (charCode - keyCharCode + 26) % 26 + 65
             decryptedText = decryptedText .. string.char(decryptedCharCode)
-
-            -- Move to the next letter in the key
             keyIndex = keyIndex % #key + 1
         else
-            -- If the character is not a letter, leave it unchanged
             decryptedText = decryptedText .. char
         end
     end
@@ -116,16 +103,16 @@ local function vigenereDecrypt(ciphertext, key)
     return decryptedText
 end
 
-
 function PandaAuth:ValidateKey(serviceID, Key)
     local service_name = string.lower(serviceID)
+
     local combined_url = validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name)
     local response = game:HttpGet(combined_url) 
-    DebugText("Encrypted Data: "..response)
+    -- DebugText("Encrypted Data: "..response)
 
     local decryption = vigenereDecrypt(response, "PANDA_DEVELOPMENT")
 
-    DebugText("Decrypted Data: "..decryption) 
+    -- DebugText("Decrypted Data: "..decryption) 
     local jsonTable = http_service:JSONDecode(decryption)
 
     local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
@@ -142,15 +129,13 @@ function PandaAuth:ValidateKey(serviceID, Key)
     DebugText("(Client) Info: "..hardwareid_auth)
     DebugText("-----------------------------------------------------")
 
-
-
     if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
         DebugText("----- Key is Authenticated -----")
-        if getgenv().CompatibleMode then
+        if getgenv().CompatibleMode then            
             return true
         else
-            local PremiumKey = PremiumKeyStatus(jsonTable.isPremium)
-            return true, PremiumKey, "authenticated"
+            
+            return true, PremiumKeyStatus(jsonTable.isPremium), "authenticated"
         end
     else
         DebugText("----- Key is Not Authenticated -----")
@@ -158,7 +143,7 @@ function PandaAuth:ValidateKey(serviceID, Key)
         if getgenv().CompatibleMode then 
             return false
         else  
-            return false, PremiumKey, "not_authenticated"
+            return false, PremiumKeyStatus(jsonTable.isPremium), "not_authenticated"
         end
     end
 end
