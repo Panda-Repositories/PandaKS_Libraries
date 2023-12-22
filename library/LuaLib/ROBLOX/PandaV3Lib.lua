@@ -93,6 +93,44 @@ function PandaAuth:GetLink(Service)
     return tostring(Server .. "/getkey?service=" .. Service .. "&hwid=" .. GetHardwareID(Service))
 end
 
+--- Panda-Pelican's Serverside ( Validation Decryption ), Decrypt the Serverside Data on Clientside
+local function vigenereDecrypt(ciphertext, key)
+    local decryptedText = ""
+    local keyIndex = 1
+
+    for i = 1, #ciphertext do
+        local char = ciphertext:sub(i, i)
+        local keyChar = key:sub(keyIndex, keyIndex)
+        if char:match("%a") then
+            local charCode = char:byte()
+            local keyCharCode = keyChar:byte()
+            local decryptedCharCode = (charCode - keyCharCode + 26) % 26 + 65
+            decryptedText = decryptedText .. string.char(decryptedCharCode)
+            keyIndex = keyIndex % #key + 1
+        else
+            decryptedText = decryptedText .. char
+        end
+    end
+
+    return decryptedText
+end
+
+local function calculateSHA256(input) 
+    -- Make a request to an external API that calculates SHA256
+    local response = http_service:RequestAsync({
+        Url = "https://api.pwnedpasswords.com/range/" .. http_service:SHA256(input):sub(1, 5),
+        Method = "GET",
+    })
+    -- Check if the request was successful
+    if response.Success then
+        -- Extract the SHA256 hash from the response
+        local sha256Hash = http_service:SHA256(input):upper()
+        return sha256Hash
+    else
+        warn("Error calculating SHA256 hash:", response.StatusMessage)
+        return nil
+    end
+end
 --- This is our validate function which we use for obviously validating the key and service
 --- @param Service string
 --- @param Key string
@@ -101,9 +139,13 @@ function PandaAuth:ValidateKey(Service, Key)
     local Response = game:HttpGet(Server .. "/validate?service=" .. Service .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(Service), false, {
         ["User-Agent"] = "Mobile-Auth-Client/1.0"
     })
-    local Data = game:GetService("HttpService"):JSONDecode(Response)
 
-    if Data.status == "whitelisted" then
+    local Data = game:GetService("HttpService"):JSONDecode(vigenereDecrypt(Response, "PANDA_DEVELOPMENT"))
+
+    local AuthMasterStatus = calculateSHA256("authenticated") -- Hashed the Word to SHA256 ( why? idk )
+    local hardwareid_auth = calculateSHA256(GetHardwareID(Service))
+    
+    if jsonTable.STATUS == AuthMasterStatus and jsonTable.DEV_ID == hardwareid_auth then
         debug("--> Successfully Authenticated <--", "print")
         local key = "Mr. Lolegic"
         return encrypt(Service, key)
