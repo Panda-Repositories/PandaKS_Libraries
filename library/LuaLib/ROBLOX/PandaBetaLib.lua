@@ -71,31 +71,11 @@ function PandaAuth:GetLink(Exploit)
     return user_link
 end
 
--- SHA256 Hashing Serverside Algorithm
-local function calculateSHA256(input) 
-    local stringbrub = input
-    DebugText("[+] SHA256 Hashing: ".. stringbrub)
-    -- Make a request to an external API that calculates SHA256
-    local response = http_service:RequestAsync({
-        Url = "https://api.pwnedpasswords.com/range/" .. http_service:SHA256(input):sub(1, 5),
-        Method = "GET",
-    })
-    -- Check if the request was successful
-    if response.Success then
-        -- Extract the SHA256 hash from the response
-        local sha256Hash = http_service:SHA256(input):upper()
-        DebugText("[+] Server Command Hashing: ".. sha256Hash) 
-        return sha256Hash
-
-    else
-        warn("Error calculating SHA256 hash:", response.StatusMessage)
-        return nil
-    end
-end
 
 local function PandaSHA256(service, stringbrub)
     DebugText("[+] Command Hashing: ".. stringbrub)
     local hashed = game:HttpGet(server_configuration ..  "/serviceapi?service=" .. service .. "&command=hashed&param="..stringbrub)
+    DebugText("[+] Server Respond: ".. hashed)
     return hashed
 end
 
