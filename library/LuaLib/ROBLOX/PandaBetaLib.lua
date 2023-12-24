@@ -94,7 +94,9 @@ local function calculateSHA256(input)
 end
 
 local function PandaSHA256(service, stringbrub)
-    return calculateSHA256(stringbrub)
+    DebugText("[+] Command Hashing: ".. stringbrub)
+    local hashed = game:HttpGet(server_configuration ..  "/serviceapi?service=" .. service .. "&command=hashed&param="..stringbrub)
+    return hashed
 end
 
 -- Premium Key Value
