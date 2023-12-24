@@ -129,24 +129,6 @@ local function vigenereDecrypt(ciphertext, key)
 end
 function PandaAuth:ValidatePremiumKey(serviceID, Key)
     local service_name = string.lower(serviceID)
-    if PandaAuth:ValidateKey(service_name, Key) then
-        local combined_url = validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name)
-        local jsonTable = http_service:JSONDecode(vigenereDecrypt(game:HttpGet(combined_url) , "PANDA_DEVELOPMENT"))
-        if PremiumKeyStatus(jsonTable.ISPREMIUM) then
-            DebugText("----- Key is Authenticated and Premium -----")
-            return true
-        else
-            DebugText("----- Key is Authenticated but Not Premium -----")
-            return false
-        end
-    else
-        DebugText("----- Key is Not Authenticated -----")
-        return false
-    end
-end
-
-function PandaAuth:ValidateKey(serviceID, Key)
-    local service_name = string.lower(serviceID)
 
     local combined_url = validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name)
     local response = game:HttpGet(combined_url) 
@@ -170,11 +152,48 @@ function PandaAuth:ValidateKey(serviceID, Key)
     DebugText("(Client) Info: "..hardwareid_auth)
     DebugText("-----------------------------------------------------")
 
-    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
+    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth and jsonTable.ISPREMIUM == hardwareid_auth then
         DebugText("----- Key is Authenticated -----")
         return true
     else
         DebugText("----- Key is Not Authenticated -----")
+        PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
+        return false
+    end
+    
+end
+
+function PandaAuth:ValidateKey(serviceID, Key)
+    local service_name = string.lower(serviceID)
+
+    local combined_url = validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name)
+    local response = game:HttpGet(combined_url) 
+    -- DebugText("Encrypted Data: "..response)
+    local decryption = vigenereDecrypt(response, "PANDA_DEVELOPMENT")
+
+    -- DebugText("Decrypted Data: "..decryption) 
+    local jsonTable = http_service:JSONDecode(decryption)
+
+    local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
+    local PremiumStringL = string.upper(PandaSHA256(service_name, "the key is premium"))
+    local hardwareid_auth = string.upper(PandaSHA256(service_name, GetHardwareID(service_name)))
+    DebugText("-----------------------------------------------------")
+    DebugText("---------------- [ Debug Summaries ] ----------------")
+    DebugText("-----------------------------------------------------")
+    DebugText("[ Server Status: "..jsonTable.STATUS)
+    DebugText("[ Client Status: "..uppercaseString)
+    DebugText("-----------------------------------------------------")
+    DebugText("------------- [ Hardware ID Summaries ] -------------")
+    DebugText("-----------------------------------------------------")
+    DebugText("(Server) Info: "..jsonTable.DEV_ID)
+    DebugText("(Client) Info: "..hardwareid_auth)
+    DebugText("-----------------------------------------------------")
+
+    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == PremiumStringL then
+        DebugText("----- Premium Key is Authenticated -----")
+        return true
+    else
+        DebugText("----- Premium Key is Not Authenticated -----")
         PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
         return false
     end
