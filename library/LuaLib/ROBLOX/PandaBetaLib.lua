@@ -134,7 +134,11 @@ function PandaAuth:ValidatePremiumKey(serviceID, Key)
     DebugText("(Server) Info: "..jsonTable.DEV_ID)
     DebugText("(Client) Info: "..hardwareid_auth)
     DebugText("-----------------------------------------------------")
-
+    DebugText("------------- [ Premium ID Summaries ] -------------")
+    DebugText("-----------------------------------------------------")
+    DebugText("(Server Premium) Info: "..jsonTable.ISPREMIUM)
+    DebugText("(Local  Premium) Info: "..PremiumStringL)
+    DebugText("-----------------------------------------------------")
     if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth and jsonTable.ISPREMIUM == PremiumStringL then
         DebugText("----- Key is Authenticated -----")
         return true
@@ -173,10 +177,10 @@ function PandaAuth:ValidateKey(serviceID, Key)
     DebugText("-----------------------------------------------------")
 
     if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
-        DebugText("----- Premium Key is Authenticated -----")
+        DebugText("----- Regular Key is Authenticated -----")
         return true
     else
-        DebugText("----- Premium Key is Not Authenticated -----")
+        DebugText("----- Regular Key is Not Authenticated -----")
         PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
         return false
     end
