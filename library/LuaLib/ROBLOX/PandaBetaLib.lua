@@ -122,6 +122,7 @@ function PandaAuth:ValidatePremiumKey(serviceID, Key)
 
     local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
     local hardwareid_auth = string.upper(PandaSHA256(service_name, GetHardwareID(service_name)))
+    local PremiumStringL = string.upper(PandaSHA256(service_name, "the key is premium"))
     DebugText("-----------------------------------------------------")
     DebugText("---------------- [ Debug Summaries ] ----------------")
     DebugText("-----------------------------------------------------")
@@ -134,7 +135,7 @@ function PandaAuth:ValidatePremiumKey(serviceID, Key)
     DebugText("(Client) Info: "..hardwareid_auth)
     DebugText("-----------------------------------------------------")
 
-    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth and jsonTable.ISPREMIUM == hardwareid_auth then
+    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth and jsonTable.ISPREMIUM == PremiumStringL then
         DebugText("----- Key is Authenticated -----")
         return true
     else
@@ -157,7 +158,7 @@ function PandaAuth:ValidateKey(serviceID, Key)
     local jsonTable = http_service:JSONDecode(decryption)
 
     local uppercaseString = string.upper(PandaSHA256(service_name, "authenticated"))
-    local PremiumStringL = string.upper(PandaSHA256(service_name, "the key is premium"))
+
     local hardwareid_auth = string.upper(PandaSHA256(service_name, GetHardwareID(service_name)))
     DebugText("-----------------------------------------------------")
     DebugText("---------------- [ Debug Summaries ] ----------------")
@@ -171,7 +172,7 @@ function PandaAuth:ValidateKey(serviceID, Key)
     DebugText("(Client) Info: "..hardwareid_auth)
     DebugText("-----------------------------------------------------")
 
-    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == PremiumStringL then
+    if jsonTable.STATUS == uppercaseString and jsonTable.DEV_ID == hardwareid_auth then
         DebugText("----- Premium Key is Authenticated -----")
         return true
     else
