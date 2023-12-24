@@ -72,20 +72,21 @@ function PandaAuth:GetLink(Exploit)
 end
 
 
+-- SHA256 Hashing Serverside Algorithm
 local function PandaSHA256(service, stringbrub)
     DebugText("[+] Command Hashing: ".. stringbrub)
-    wait(0.5)
     local hashed = game:HttpGet(server_configuration ..  "/serviceapi?service=" .. service .. "&command=hashed&param="..stringbrub)
-    DebugText("[+] Server Respond: ".. hashed)
     return hashed
 end
 
 -- Premium Key Value
-local function PremiumKeyStatus(brub)
+local function PremiumKeyStatus(service_name, brub)
     DebugText("[+] Premium Key: ".. brub)
     if brub ==  string.upper(PandaSHA256(service_name, "the key is premium")) then
+        DebugText("[+] Authentication Token is matched")
         return true
     else
+        DebugText("[+] Authentication Token is mismatched")
         return false
     end
 end
