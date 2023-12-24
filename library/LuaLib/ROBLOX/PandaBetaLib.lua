@@ -73,7 +73,7 @@ end
 
 -- SHA256 Hashing Serverside Algorithm
 local function PandaSHA256(service, stringbrub)
-    -- DebugText("[+] Command Hashing: ".. stringbrub)
+    DebugText("[+] Command Hashing: ".. stringbrub)
     local hashed = game:HttpGet(server_configuration ..  "/serviceapi?service=" .. service .. "&command=hashed&param="..stringbrub)
     return hashed
 end
