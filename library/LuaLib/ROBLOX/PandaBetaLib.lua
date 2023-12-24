@@ -75,6 +75,7 @@ end
 local function PandaSHA256(service, stringbrub)
     DebugText("[+] Command Hashing: ".. stringbrub)
     local hashed = game:HttpGet(server_configuration ..  "/serviceapi?service=" .. service .. "&command=hashed&param="..stringbrub)
+    DebugText("[+] Server Command Hashing: ".. hashed)  
     return hashed
 end
 
