@@ -81,7 +81,11 @@ end
 -- Premium Key Value
 local function PremiumKeyStatus(brub)
     DebugText("[+] Premium Key: ".. brub)
-    return brub ==  string.upper(PandaSHA256(service_name, "the key is premium")) 
+    if brub ==  string.upper(PandaSHA256(service_name, "the key is premium")) then
+        return true
+    else
+        return false
+    end
 end
 
 local function vigenereDecrypt(ciphertext, key)
