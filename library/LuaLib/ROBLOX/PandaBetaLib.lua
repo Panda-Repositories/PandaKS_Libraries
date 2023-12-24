@@ -73,6 +73,7 @@ end
 
 -- SHA256 Hashing Serverside Algorithm
 local function calculateSHA256(input) 
+    local stringbrub = input
     DebugText("[+] SHA256 Hashing: ".. stringbrub)
     -- Make a request to an external API that calculates SHA256
     local response = http_service:RequestAsync({
