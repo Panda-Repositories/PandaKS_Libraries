@@ -71,50 +71,16 @@ function PandaAuth:GetLink(Exploit)
     return user_link
 end
 
-local function GetDataFromServer(serviceID, Key)
-    local service_name = string.lower(serviceID)
-    local response = nil
-    local timeout = 10 -- Set a timeout in seconds
-    local startTime = tick()
-
-    while response == nil and tick() - startTime < timeout do
-        wait(1) -- Adjust the wait time based on your needs
-        -- Make the HTTP request
-        response = game:HttpGet(validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name))
-    end
-
-    if response == nil then
-        DebugText("Timeout reached, no response received")
-        return "timeout_error"
-    elseif response.StatusCode == 200 and response == nil then
-        DebugText("Issue on HTTPGet")
-        return "httpget_issue"
-    else
-        DebugText("[ - Request successful - ]")
-        return response
-    end
-end
 local function EncryptionSaveDisk(Data)
     local dick = Data
 end
 
 function PandaAuth:ValidateKey(serviceID, Key)
     local service_name = string.lower(serviceID)
-    -- Call the function
-    local result = GetDataFromServer(serviceID, key)
+    local result = game:HttpGet(validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name))
 
--- Handle the result
-    if result == "timeout_error" then
-        print("Timeout reached, no response received")
-        return false
-    -- Handle the timeout error
-    elseif result == "httpget_issue" then
-        print("Issue on HTTPGet from your ROBLOX Lua Executor")
-        return false
-    end
-        
     if result == nil then
-        DebugText("Failed to Get Data, WHAT!")
+        DebugText("Failed to fetch Data from Server, Caught off-guard tbh")
     end
     local jsonTable = http_service:JSONDecode(result)
 
