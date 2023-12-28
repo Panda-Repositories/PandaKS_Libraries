@@ -89,7 +89,7 @@ function PandaAuth:ValidateKey(serviceID, Key)
 
     if jsonTable.status == "success" and jsonTable.service == serviceID then        
         DebugText("----- Key is Authenticated -----")
-        writefile("Premium.txt", jsonTable.isPremium)
+        writefile("Premium.txt", tostring(jsonTable.isPremium))
         return true
     elseif jsonTable.status == "unsupported" then
         DebugText("----- Executor Unsupported -----")
