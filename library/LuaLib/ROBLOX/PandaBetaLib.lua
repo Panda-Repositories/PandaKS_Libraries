@@ -18,7 +18,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://auth.pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "[ 2.1.3_alpha ]"
+local LibVersion = "[ 2.1.3_alpha ] - Panda-Pelican Development"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -26,7 +26,7 @@ local validation_service = server_configuration.. "/failsafeValidation"
 
 function DebugText(text)
     if getgenv().DebugMode then
-        print("[ DEBUG ] - "..text)
+        print("[ Developer Mode ] - "..text)
     end
 end
 
@@ -118,6 +118,14 @@ end
 function PandaAuth:ValidateNormalKey(service_name, Key)
     local bruh = PandaAuth:ValidateKey(service_name, Key)
     return bruh
+end
+
+-- Contributed from [ Hub Member: asrua ]
+function PandaAuth:ResetHardwareID(ServiceID, oldKey)
+    local service_name = string.lower(serviceID)
+    for i,v in pairs(http_service:JSONDecode(request({Url = "https://pandadevelopment.net/serviceapi/edit/hwid/?service="..service_name.."&key=" .. oldKey .. "&newhwid=" .. game:GetService("RbxAnalyticsService"):GetClientId(), Method = "POST"}).Body)) do
+        print(i, v)
+    end
 end
 
 
