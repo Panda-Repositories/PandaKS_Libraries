@@ -83,7 +83,9 @@ function PandaAuth:ValidateKey(serviceID, Key)
         DebugText("Failed to fetch Data from Server, Caught off-guard tbh")
     end
     local jsonTable = http_service:JSONDecode(result)
-
+    if jsonTable == nil then
+        DebugText("Something isn't right [ Didn't JSON Decoding Work? ]")
+    end
 
     if jsonTable.status == "success" and jsonTable.service == serviceID then        
         DebugText("----- Key is Authenticated -----")
