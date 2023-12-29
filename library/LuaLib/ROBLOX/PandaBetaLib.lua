@@ -81,33 +81,6 @@ local function EncryptionSaveDisk(Data)
     local dick = Data
 end
 
--- New Secure Function 
-function PandaAuthLib:SecureExecute(serviceID, key, codeFunction)
-    local service_name = string.lower(serviceID)
-    local result = game:HttpGet(validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name))
-
-    if result == nil then
-        DebugText("Failed to fetch Data from Server, Caught off-guard tbh")
-    end
-    local jsonTable = http_service:JSONDecode(result)
-    if jsonTable == nil then
-        DebugText("Something isn't right [ Didn't JSON Decoding Work? ]")
-    end
-
-    if jsonTable.status == "success" and jsonTable.service == serviceID then        
-        DebugText("----- Key is Authenticated -----")
-        -- Execute the provided codeFunction with any additional arguments
-        -- No Arguement at this moment
-        codeFunction()
-    elseif jsonTable.status == "unsupported" then
-        DebugText("----- Executor Unsupported -----")
-    else
-        DebugText("----- Regular Key is Not Authenticated -----")
-        PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
-    end
-end
--- ===================================================================================
-
 function PandaAuth:ValidateKey(serviceID, Key)
     local service_name = string.lower(serviceID)
     local result = game:HttpGet(validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name))
