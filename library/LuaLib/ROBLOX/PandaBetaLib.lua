@@ -77,7 +77,7 @@ function PandaAuth:GetLink(Exploit)
     return user_link
 end
 
-function PandaAuth:SecureExecute(serviceID, codeFunction)
+function PandaAuth:SecureExecute(serviceID, Key, codeFunction)
     local service_name = string.lower(serviceID)
     if PandaAuth:ValidateKey(service_name, Key) == true then
         wait(1)
