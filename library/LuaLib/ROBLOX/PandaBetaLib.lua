@@ -64,6 +64,12 @@ function PandaAuth:Version()
     return LibVersion
 end
 
+function PandaAuth:GetKey(Exploit)
+    local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
+    PandaLibNotification(user_link)
+    DebugText("Get Key: "..user_link)
+    return user_link
+end
 function PandaAuth:GetLink(Exploit)
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
