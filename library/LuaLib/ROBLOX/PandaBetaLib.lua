@@ -81,7 +81,8 @@ function PandaAuth:SecureExecute(serviceID, Key, codeFunction)
     if serviceID == nil then
         warn("[+] No Service Detected")
     elseif Key == nil then
-        warn("[+] No Key Detected")      
+        warn("[+] No Key Detected")  
+    end    
     local service_name = string.lower(serviceID)
     if PandaAuth:ValidateKey(service_name, Key) == true then
         wait(1)
