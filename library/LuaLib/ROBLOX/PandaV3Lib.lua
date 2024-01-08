@@ -173,6 +173,13 @@ function PandaAuth:ValidateNormalKey(service_name, Key)
     return bruh
 end
 
+-- Contributed from [ Hub Member: asrua ]
+function PandaAuth:ResetHardwareID(ServiceID, oldKey)
+    local service_name = string.lower(serviceID)
+    for i,v in pairs(http_service:JSONDecode(request({Url = "https://pandadevelopment.net/serviceapi/edit/hwid/?service="..service_name.."&key=" .. oldKey .. "&newhwid=" .. game:GetService("RbxAnalyticsService"):GetClientId(), Method = "POST"}).Body)) do
+        print(i, v)
+    end
+end
 
 
 return PandaAuth
