@@ -36,14 +36,13 @@ local function GetHardwareID(service)
         local client_id = rbx_analytics_service:GetClientId()
     
         if jsonData.AuthMode == "playerid" then
-            return _tostring(players_service.LocalPlayer.UserId) .."_MOBILE"
+            return _tostring(players_service.LocalPlayer.UserId)
         elseif jsonData.AuthMode == "hwidplayer" then
-            local hashedata = _tostring(game:HttpGet(server_configuration.."/serviceapi?service="..service.."&command=Hashed&param=".. players_service.LocalPlayer.UserId..client_id, true))
+            local stringWithoutHyphens = string.gsub(client_id, "-", "")
+            local hashedata = client_id..stringWithoutHyphens
             return hashedata
         elseif jsonData.AuthMode == "hwidonly" then
             return client_id
-        elseif jsonData.AuthMode == "iponly" then       
-            return jsonData.IPToken
         else
             return players_service.LocalPlayer.UserId
         end
@@ -129,7 +128,7 @@ end
 function PandaAuth:ValidateKey(serviceID, ClientKey)
     local Service_ID = string.lower(serviceID)
     local response = request({
-        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..game:GetService("Players").LocalPlayer.UserId .. "&key="..ClientKey,
+        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
         Method = "GET"
     })
     CreateResponseCode(Service_ID, response.StatusCode, response.Body)
