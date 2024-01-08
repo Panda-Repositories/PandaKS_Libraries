@@ -126,7 +126,7 @@ end
 function PandaAuth:ValidateKey(serviceID, ClientKey)
     local Service_ID = string.lower(serviceID)
     local response = request({
-        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
+        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
         Method = "GET"
     })
     CreateResponseCode(Service_ID, response.StatusCode, response.Body)
