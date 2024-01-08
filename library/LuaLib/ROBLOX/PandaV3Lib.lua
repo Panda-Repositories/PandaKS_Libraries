@@ -32,15 +32,13 @@ end
 
 
 local function GetHardwareID(service)
-        local jsonData = http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig", true))
+        local jsonData = http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig"))
         local client_id = rbx_analytics_service:GetClientId()
     
         if jsonData.AuthMode == "playerid" then
             return _tostring(players_service.LocalPlayer.UserId)
         elseif jsonData.AuthMode == "hwidplayer" then
-            local stringWithoutHyphens = string.gsub(client_id, "-", "")
-            local hashedata = client_id..stringWithoutHyphens
-            return hashedata
+            return client_id
         elseif jsonData.AuthMode == "hwidonly" then
             return client_id
         else
