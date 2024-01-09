@@ -8,17 +8,16 @@ getgenv().DebugMode = false
 
 
 -- Roblox Lua Services
-local http_service = cloneref(game:GetService("HttpService"))
-local rbx_analytics_service = cloneref(game:GetService("RbxAnalyticsService"))
-local starter_gui_service = cloneref(game:GetService("StarterGui"))
-local players_service = cloneref(game:GetService("Players"))
-local _tostring = clonefunction(tostring)
+local http_service = game:GetService("HttpService")
+local rbx_analytics_service = game:GetService("RbxAnalyticsService")
+local starter_gui_service = game:GetService("StarterGui")
+local players_service = game:GetService("Players")
 
 -- Server Domain
 local server_configuration = "https://auth.pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "[ 2.1.4 ] - Panda-Pelican Development"
+local LibVersion = "[ 2.1.5_CompatibleMode ] - Panda-Pelican Development"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -36,7 +35,7 @@ local function GetHardwareID(service)
         local client_id = rbx_analytics_service:GetClientId()
     
         if jsonData.AuthMode == "playerid" then
-            return _tostring(players_service.LocalPlayer.UserId)
+            return tostring(players_service.LocalPlayer.UserId)
         elseif jsonData.AuthMode == "hwidplayer" then
             return client_id
         elseif jsonData.AuthMode == "hwidonly" then
