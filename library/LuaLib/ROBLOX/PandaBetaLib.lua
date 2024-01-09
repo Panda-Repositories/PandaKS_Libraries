@@ -18,7 +18,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://auth.pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "[ 2.1.3_alpha ] - Panda-Pelican Development"
+local LibVersion = "[ 2.1.4 ] - Panda-Pelican Development"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -32,18 +32,15 @@ end
 
 
 local function GetHardwareID(service)
-        local jsonData = http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig", true))
+        local jsonData = http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig"))
         local client_id = rbx_analytics_service:GetClientId()
     
         if jsonData.AuthMode == "playerid" then
-            return _tostring(players_service.LocalPlayer.UserId) .."_MOBILE"
+            return _tostring(players_service.LocalPlayer.UserId)
         elseif jsonData.AuthMode == "hwidplayer" then
-            local hashedata = _tostring(game:HttpGet(server_configuration.."/serviceapi?service="..service.."&command=Hashed&param=".. players_service.LocalPlayer.UserId..client_id, true))
-            return hashedata
+            return client_id
         elseif jsonData.AuthMode == "hwidonly" then
             return client_id
-        elseif jsonData.AuthMode == "iponly" then       
-            return jsonData.IPToken
         else
             return players_service.LocalPlayer.UserId
         end
@@ -77,32 +74,79 @@ function PandaAuth:GetLink(Exploit)
     return user_link
 end
 
-local function EncryptionSaveDisk(Data)
-    local dick = Data
+local function GetInfoJSON(command, jsonString)
+    -- Assuming you have a JSON library or function to decode the JSON string
+    local decodedJson = http_service:JSONDecode(jsonString)
+    
+    if command == "get_premiumvalue" then
+        if decodedJson and decodedJson.isPremium ~= nil then
+            local isPremiumValue = decodedJson.isPremium
+            return isPremiumValue
+        else
+            return false
+        end
+    elseif command == "get_note" then
+        if decodedJson and decodedJson.note ~= nil then
+            local GetNote = decodedJson.note
+            return GetNote
+        else
+            return "No Message"
+        end
+    else
+        return nil
+    end
 end
 
-function PandaAuth:ValidateKey(serviceID, Key)
-    local service_name = string.lower(serviceID)
-    local result = game:HttpGet(validation_service .. "?service=" .. service_name .. "&key=" .. Key .. "&hwid=" .. GetHardwareID(service_name))
+-- New Function ( GetResponseSummary() )
+local function CreateResponseCode(ServiceID, code, MessageCause)    
+    local data = {
+        Identifier = tostring(ServiceID),
+        code = code,
+        Message = tostring(GetInfoJSON("get_note", MessageCause)),
+        IsPremium = GetInfoJSON("get_premiumvalue", MessageCause)
+    }
+    local encodedData = http_service:JSONEncode(data)
+    writefile("Panda_AuthSummary.json", encodedData)
+end
 
-    if result == nil then
-        DebugText("Failed to fetch Data from Server, Caught off-guard tbh")
-    end
-    local jsonTable = http_service:JSONDecode(result)
-    if jsonTable == nil then
-        DebugText("Something isn't right [ Didn't JSON Decoding Work? ]")
-    end
+-- New Function ( GetResponseSummary() )
+function PandaAuth:GetResponseSummary()
+    local success, data = pcall(function()
+        return http_service:JSONDecode(readfile("Panda_AuthSummary.json"))
+    end)
 
-    if jsonTable.status == "success" and jsonTable.service == serviceID then        
-        DebugText("----- Key is Authenticated -----")
-        writefile("Premium.txt", tostring(jsonTable.isPremium))
-        return true
-    elseif jsonTable.status == "unsupported" then
-        DebugText("----- Executor Unsupported -----")
-        return "unsupported"
+    if success then
+        return data["code"]
     else
-        DebugText("----- Regular Key is Not Authenticated -----")
-        PandaLibNotification("Unable to Validate the Key, See for Developer Console") 
+        warn("Failed to Get Summary Result :skull:")
+        return ""
+    end
+end
+
+function PandaAuth:ValidateKey(serviceID, ClientKey)
+    local Service_ID = string.lower(serviceID)
+    local response = request({
+        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
+        Method = "GET"
+    })
+    CreateResponseCode(Service_ID, response.StatusCode, response.Body)
+    if response.StatusCode == 200 then
+        -- Instead of fucking finding a string true... why do this
+        local success, data = pcall(function()
+            return http_service:JSONDecode(response.Body)
+        end)
+        if success and data["status"] == "success" then
+            return true
+        end
+        return false
+    elseif response.StatusCode == 406 then
+        -- Especific Hardware / IP Address got Banned
+        return false
+    elseif response.StatusCode == 204 then
+        -- Invalid Key 
+        return false
+    elseif response.StatusCode == 429 then
+        -- Rate Limiter kicked ( Cloudflare limits for 10seconds. )
         return false
     end
 end
@@ -111,8 +155,11 @@ function PandaAuth:ValidatePremiumKey(serviceID, Key)
     local service_name = string.lower(serviceID)
     if PandaAuth:ValidateKey(service_name, Key) == true then
         wait(1)
-        if readfile("Premium.txt") == tostring(true) then 
-            return true
+        local success, data = pcall(function()
+            return http_service:JSONDecode(readfile("Panda_AuthSummary.json"))
+        end)    
+        if success then
+            return data["IsPremium"]
         else
             return false
         end
