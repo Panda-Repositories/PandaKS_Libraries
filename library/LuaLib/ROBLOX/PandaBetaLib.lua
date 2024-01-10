@@ -182,9 +182,9 @@ function PandaAuth:ResetHardwareID(ServiceID, oldKey)
 end
 
 function PandaAuth:SetHTTPProtocol(IPv4)
-warn("HTTP Protocol [ Beta/Unstable ])")
+warn("(Panda-Pelican Development | HTTP Protocol [ Beta ])")
 local No_Execute = "No_Data_Set_Here"
-if ipv4Address == "" or ipv4Address == nil then
+if IPv4 == "" or IPv4 == nil then
     warn("[Unable to Start HTTP-Protocol] - Missing IP Address / Port")
     return
 end
