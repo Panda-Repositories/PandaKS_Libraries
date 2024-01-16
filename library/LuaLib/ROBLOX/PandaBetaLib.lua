@@ -14,7 +14,11 @@ local starter_gui_service = cloneref(game:GetService("StarterGui"))
 local players_service = cloneref(game:GetService("Players"))
 local _tostring = clonefunction(tostring)
 
-local MaintenanceMode = true;
+-- ============================================================================================
+-- Set to True if Panda Key System's Database Fucked up ( Incase of Emergency )
+-- ============================================================================================
+local MaintenanceMode = false
+
 -- Server Domain
 local server_configuration = "https://auth.pandadevelopment.net"
 
@@ -63,18 +67,12 @@ function PandaAuth:Version()
 end
 
 function PandaAuth:GetKey(Exploit)
-    if MaintenanceMode then
-        return "Click_Continue_ON_KEYGUI__[KEY_SYS_TEMPORARY_REPAIR]"
-    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
     return user_link
 end
 function PandaAuth:GetLink(Exploit)
-    if MaintenanceMode then
-        return "Click_Continue_ON_KEYGUI__[KEY_SYS_TEMPORARY_REPAIR]"
-    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
