@@ -14,6 +14,7 @@ local starter_gui_service = cloneref(game:GetService("StarterGui"))
 local players_service = cloneref(game:GetService("Players"))
 local _tostring = clonefunction(tostring)
 
+local MaintenanceMode = true;
 -- Server Domain
 local server_configuration = "https://auth.pandadevelopment.net"
 
@@ -62,12 +63,18 @@ function PandaAuth:Version()
 end
 
 function PandaAuth:GetKey(Exploit)
+    if MaintenanceMode then
+        return "Click_Continue_ON_KEYGUI__[KEY_SYS_TEMPORARY_REPAIR]"
+    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
     return user_link
 end
 function PandaAuth:GetLink(Exploit)
+    if MaintenanceMode then
+        return "Click_Continue_ON_KEYGUI__[KEY_SYS_TEMPORARY_REPAIR]"
+    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
@@ -124,6 +131,9 @@ function PandaAuth:GetResponseSummary()
 end
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
+    if MaintenanceMode then
+        return true
+    end
     local Service_ID = string.lower(serviceID)
     local response = request({
         Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
@@ -152,6 +162,9 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 end
 
 function PandaAuth:ValidatePremiumKey(serviceID, Key)
+    if MaintenanceMode then
+        return true
+    end
     local service_name = string.lower(serviceID)
     if PandaAuth:ValidateKey(service_name, Key) == true then
         wait(1)
