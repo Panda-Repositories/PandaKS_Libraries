@@ -129,9 +129,6 @@ function PandaAuth:GetResponseSummary()
 end
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
-    if MaintenanceMode then
-        return true
-    end
     local Service_ID = string.lower(serviceID)
     local response = request({
         Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
@@ -160,9 +157,6 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 end
 
 function PandaAuth:ValidatePremiumKey(serviceID, Key)
-    if MaintenanceMode then
-        return true
-    end
     local service_name = string.lower(serviceID)
     if PandaAuth:ValidateKey(service_name, Key) == true then
         wait(1)
@@ -192,8 +186,8 @@ function PandaAuth:ResetHardwareID(ServiceID, oldKey)
     end
 end
 
+
 function PandaAuth:SetHTTPProtocol(IPv4)
-warn("(Panda-Pelican Development | HTTP Protocol [ Beta ])")
 local No_Execute = "No_Data_Set_Here"
 if IPv4 == "" or IPv4 == nil then
     warn("[Unable to Start HTTP-Protocol] - Missing IP Address / Port")
@@ -220,6 +214,7 @@ end)
 end
 
 function PandaAuth:SetWebsocket(IpAddress)
+    warn("This Feature is not available yet... Sorry")
     print("Hi -> "..tostring(IpAddress))
 end
 
