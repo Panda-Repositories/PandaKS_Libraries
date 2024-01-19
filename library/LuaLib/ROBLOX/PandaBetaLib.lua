@@ -1,3 +1,4 @@
+print('seems worked lmfao xD')
 local PandaAuth = {}
 
 -- User Customizations
@@ -14,16 +15,12 @@ local starter_gui_service = cloneref(game:GetService("StarterGui"))
 local players_service = cloneref(game:GetService("Players"))
 local _tostring = clonefunction(tostring)
 
--- ============================================================================================
--- Set to True if Panda Key System's Database Fucked up ( Incase of Emergency )
--- ============================================================================================
-local MaintenanceMode = false
 
 -- Server Domain
 local server_configuration = "https://auth.pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "[ 2.1.4 ] - Panda-Pelican Development"
+local LibVersion = "v2.1.5_Release"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -145,6 +142,9 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
         end
         return false
     elseif response.StatusCode == 406 then
+        -- Especific Hardware / IP Address got Banned
+        return false
+    elseif response.StatusCode == 403 then
         -- Especific Hardware / IP Address got Banned
         return false
     elseif response.StatusCode == 204 then
