@@ -65,12 +65,20 @@ function PandaAuth:Version()
 end
 
 function PandaAuth:GetKey(Exploit)
+    if TemporaryAccess then
+        local TempKey = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. players_service.LocalPlayer.UserId;
+        return TempKey
+    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
     return user_link
 end
 function PandaAuth:GetLink(Exploit)
+    if TemporaryAccess then
+        local TempKey = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. players_service.LocalPlayer.UserId;
+        return TempKey
+    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
