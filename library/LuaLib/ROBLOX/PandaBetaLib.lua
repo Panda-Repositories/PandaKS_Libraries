@@ -7,6 +7,7 @@ getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
+local TemporaryAccess = true
 
 -- Roblox Lua Services
 local http_service = cloneref(game:GetService("HttpService"))
@@ -126,6 +127,9 @@ function PandaAuth:GetResponseSummary()
 end
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
+    if TemporaryAccess then
+        return true
+    end
     local Service_ID = string.lower(serviceID)
     local response = request({
         Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
