@@ -35,18 +35,40 @@ end
 
 
 local function GetHardwareID(service)
-        local jsonData = http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig"))
-        local client_id = rbx_analytics_service:GetClientId()
-    
-        if jsonData.AuthMode == "playerid" then
-            return _tostring(players_service.LocalPlayer.UserId)
-        elseif jsonData.AuthMode == "hwidplayer" then
-            return client_id
-        elseif jsonData.AuthMode == "hwidonly" then
-            return client_id
+        -- Replace with Request
+        local response = request({
+            Url = server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig",
+            Method = "GET"
+        })
+        if response.StatusCode == 200 then
+            local success, data = pcall(function()
+                return http_service:JSONDecode(response.Body)
+            end)
+            if success then
+                if data["AuthMode"] == "hwidonly" then
+                    return rbx_analytics_service:GetClientId()
+                elseif data["AuthMode"] == "playerid" then
+                    return _tostring(players_service.LocalPlayer.UserId)
+                else
+                    local success, result = pcall(function()
+                        return game:HttpGet("https://pandadevelopment.net/serviceapi?service=pandadevkit&command=getuseripaddress")
+                    end)
+                    
+                    if success then
+                        return result
+                    else
+                        print("Error occurred:", result)
+                        return _tostring(players_service.LocalPlayer.UserId)
+                    end                    
+                end
+            end
         else
-            return players_service.LocalPlayer.UserId
-        end
+            PandaLibNotification("Error: Check your Dev-Console")
+            print("********************************************")
+            warn("GetHardwareID() - ".. data)
+            print("********************************************")
+            return rbx_analytics_service:GetClientId()
+        end    
 end
 
 local function PandaLibNotification(message)
