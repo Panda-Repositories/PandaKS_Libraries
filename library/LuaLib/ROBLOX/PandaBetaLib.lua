@@ -1,4 +1,3 @@
-print('seems worked lmfao xD')
 local PandaAuth = {}
 
 -- User Customizations
@@ -69,6 +68,10 @@ function PandaAuth:GetKey(Exploit)
         local TempKey = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. players_service.LocalPlayer.UserId;
         return TempKey
     end
+    if Exploit == "vegax" then
+        local VegaExclusive = server_configuration .. "/getkey?service=vegax&hwid=" .. GetHardwareID(Exploit).."&provider=linkvertise";
+        return VegaExclusive
+    end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
     DebugText("Get Key: "..user_link)
@@ -78,6 +81,10 @@ function PandaAuth:GetLink(Exploit)
     if TemporaryAccess then
         local TempKey = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. players_service.LocalPlayer.UserId;
         return TempKey
+    end
+    if Exploit == "vegax" then
+        local VegaExclusive = server_configuration .. "/getkey?service=vegax&hwid=" .. GetHardwareID(Exploit).."&provider=linkvertise";
+        return VegaExclusive
     end
     local user_link = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. GetHardwareID(Exploit);
     PandaLibNotification(user_link)
