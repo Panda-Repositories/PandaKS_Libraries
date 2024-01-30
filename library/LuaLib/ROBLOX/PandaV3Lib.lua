@@ -14,7 +14,7 @@ local service = setmetatable({}, {
 
 
 
-local LibVersion = "Panda VAL"
+local LibVersion = "V3_ClassA"
 
 local c_request  = clonefunction(request)
 
@@ -188,70 +188,36 @@ end
 
 local iter = 0
 function PandaAuth.ValidateKey(self, Key)
-	local Url = AuthHost .. "/validate?service=" .. Internal.Service .. "&hwid=" .. Identity:GetID() .. "&key=" .. Key
-	
+	local Url = AuthHost .. "/failsafeValidation?service=" .. Internal.Service .. "&hwid=" .. Identity:GetID() .. "&key=" .. Key
 	local response = request({
 		Url = Url;
 		Method = "GET";
 	})
-	
-	local success, result = pcall(function()
-		PandaAuth:Debug("Body:", response.Body, "APIToken:", Internal.APIToken)
-		local Decrypted = Crypt:XorDecrypt(response.Body, Internal.APIToken)
-		PandaAuth:Debug("Decrypted:", Decrypted)
-		pcall(function() HttpService:JSONDecode(secure_mt) end)
-		pcall(function() HttpService.JSONDecode(secure_mt, secure_mt) end)
-		return HttpService:JSONDecode(Decrypted)
-	end)
-	
 	PandaAuth:Debug("Response Status Code:", response.StatusCode)
-	
-	local function New(Endpoint)
-		local Hashed = PandaAuth:SHA256(Endpoint)
-		
-		return {
-			["Encrypted"] = Crypt:EncryptC(Hashed, Internal.ViginereKey);
-			["Premium"] = result["isPremium"];
-		}
-	end
-	
-	if response.StatusCode == 200 and success then
-		if result["service"] ~= Internal.Service then
-			PandaAuth:Debug("\xE2\x9D\x8C - Service Mismatch.")
-			
-			return New(Internal.FalseEndpoint)
-		end
-		
-		local time = result["expiresAt"]
-		
-		if result["success"] == "Authorized_" .. Internal.Service and Time:CompareDate(time) then
-			PandaAuth:Debug("\xE2\x9C\x85 - Successfully validated key.", "\nPremium:", result["isPremium"])
-			
-			return New(Internal.TrueEndpoint)
-		end
-	else
-		if response.StatusCode == 401 then
-			PandaAuth:Debug("\xE2\x9D\x8C - Your key is not valid.")
-			
-			return New(Internal.FalseEndpoint)
-		elseif response.StatusCode == 404 then
-			PandaAuth:Debug("\xE2\x9D\x8C - Could not find the server.")
-			
-			return New(Internal.FalseEndpoint)
-		elseif response.StatusCode == 406 then
-			PandaAuth:Debug("\xF0\x9F\x94\xA8 - User Account banned.")
-			
-			return New(Internal.FalseEndpoint)
-		 elseif not success then
-			PandaAuth:Debug("\xE2\x9D\x8C - Could not decrypt the server data.", "\n", result)
-			
-			return New(Internal.FalseEndpoint)
-		else
-			PandaAuth:Debug("\xE2\x9A\xA0 - Unknown response, please contact us.", response.StatusCode)
-			
-			return New(Internal.FalseEndpoint)
-		end
-	end
+    if response.StatusCode == 200 then
+		PandaAuth:Debug("Body: ".. response.Body)
+        -- Instead of fucking finding a string true... why do this
+        local success, data = pcall(function()
+            return HttpService:JSONDecode(response.Body)
+        end)
+		print("Status: "..data["status"])
+        if success and data["status"] == "success" then
+            return Internal.TrueEndpoint
+        end
+        return Internal.FalseEndpoint
+    elseif response.StatusCode == 406 then
+        -- Especific Hardware / IP Address got Banned
+        return Internal.FalseEndpoint
+    elseif response.StatusCode == 403 then
+        -- Especific Hardware / IP Address got Banned
+        return Internal.FalseEndpoint
+    elseif response.StatusCode == 204 then
+        -- Invalid Key 
+        return Internal.FalseEndpoint
+    elseif response.StatusCode == 429 then
+        -- Rate Limiter kicked ( Cloudflare limits for 10seconds. )
+        return Internal.FalseEndpoint
+    end
 end
 
 function PandaAuth.ResetHWID(self, Key)
