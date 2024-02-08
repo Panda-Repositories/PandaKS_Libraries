@@ -34,18 +34,25 @@ end
 
 
 local function GetHardwareID(service)
-        local jsonData = http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig"))
-        local client_id = rbx_analytics_service:GetClientId()
-    
+    local client_id = rbx_analytics_service:GetClientId()
+    local success, jsonData = pcall(function()
+        return http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig"))
+    end)
+    if success then        
         if jsonData.AuthMode == "playerid" then
             return _tostring(players_service.LocalPlayer.UserId)
         elseif jsonData.AuthMode == "hwidplayer" then
-            return client_id
+            return client_id..players_service.LocalPlayer.UserId
         elseif jsonData.AuthMode == "hwidonly" then
             return client_id
         else
             return players_service.LocalPlayer.UserId
         end
+    else
+        -- Handle the error, for example:
+        warn("Failed to decode JSON data:", jsonData)
+        return client_id -- or any other appropriate action
+    end    
 end
 
 local function PandaLibNotification(message)
