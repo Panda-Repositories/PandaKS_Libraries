@@ -99,41 +99,6 @@ function PandaAuth:GetLink(Exploit)
     return user_link
 end
 
-local function GetInfoJSON(command, jsonString)
-    -- Assuming you have a JSON library or function to decode the JSON string
-    local decodedJson = http_service:JSONDecode(jsonString)
-    
-    if command == "get_premiumvalue" then
-        if decodedJson and decodedJson.isPremium ~= nil then
-            local isPremiumValue = decodedJson.isPremium
-            return isPremiumValue
-        else
-            return false
-        end
-    elseif command == "get_note" then
-        if decodedJson and decodedJson.note ~= nil then
-            local GetNote = decodedJson.note
-            return GetNote
-        else
-            return "No Message"
-        end
-    else
-        return nil
-    end
-end
-
--- New Function ( GetResponseSummary() )
-local function CreateResponseCode(ServiceID, code, MessageCause)    
-    local data = {
-        Identifier = tostring(ServiceID),
-        code = code,
-        Message = tostring(GetInfoJSON("get_note", MessageCause)),
-        IsPremium = GetInfoJSON("get_premiumvalue", MessageCause)
-    }
-    local encodedData = http_service:JSONEncode(data)
-    writefile("Panda_AuthSummary.json", encodedData)
-end
-
 -- New Function ( GetResponseSummary() )
 function PandaAuth:GetResponseSummary()
     local success, data = pcall(function()
@@ -157,7 +122,6 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
         Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
         Method = "GET"
     })
-    CreateResponseCode(Service_ID, response.StatusCode, response.Body)
     if response.StatusCode == 200 then
         -- Instead of fucking finding a string true... why do this
         local success, data = pcall(function()
