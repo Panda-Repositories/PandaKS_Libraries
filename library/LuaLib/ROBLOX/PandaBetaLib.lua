@@ -152,7 +152,7 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
         return true
     end
     local response = request({
-        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
+        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. service_name .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
         Method = "GET"
     })
     if response.StatusCode == 200 then
