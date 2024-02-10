@@ -146,7 +146,7 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
     end
 end
 
-function PandaAuth:ValidatePremiumKey(serviceID, Key)
+function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
     local service_name = string.lower(serviceID)
     if TemporaryAccess then
         return true
