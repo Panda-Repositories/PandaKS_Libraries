@@ -148,17 +148,33 @@ end
 
 function PandaAuth:ValidatePremiumKey(serviceID, Key)
     local service_name = string.lower(serviceID)
-    if PandaAuth:ValidateKey(service_name, Key) == true then
-        wait(1)
+    if TemporaryAccess then
+        return true
+    end
+    local response = request({
+        Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
+        Method = "GET"
+    })
+    if response.StatusCode == 200 then
+        -- Instead of fucking finding a string true... why do this
         local success, data = pcall(function()
-            return http_service:JSONDecode(readfile("Panda_AuthSummary.json"))
-        end)    
-        if success then
-            return data["IsPremium"]
-        else
-            return false
+            return http_service:JSONDecode(response.Body)
+        end)
+        if success and data["status"] == "success" and data["isPremium"] == true then
+            return true
         end
-    else
+        return false
+    elseif response.StatusCode == 406 then
+        -- Especific Hardware / IP Address got Banned
+        return false
+    elseif response.StatusCode == 403 then
+        -- Especific Hardware / IP Address got Banned
+        return false
+    elseif response.StatusCode == 204 then
+        -- Invalid Key 
+        return false
+    elseif response.StatusCode == 429 then
+        -- Rate Limiter kicked ( Cloudflare limits for 10seconds. )
         return false
     end
 end
