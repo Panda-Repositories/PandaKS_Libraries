@@ -2,6 +2,7 @@ local PandaAuth = {}
 
 -- User Customizations
 
+getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
@@ -20,7 +21,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.6_Release"
+local LibVersion = "v2.1.7_Release"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
