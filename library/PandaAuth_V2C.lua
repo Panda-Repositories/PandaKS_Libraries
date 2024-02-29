@@ -1,6 +1,3 @@
-
-
-
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
 -- Roblox Lua Services
@@ -28,18 +25,6 @@ local function replaceTableToEmpty(tbl)
 		end,
 	})
 	return newTbl
-end
-
-JSONParse = function(path)
-	local result = nil
-	pcall(function()
-		result = HttpService:JSONDecode(game:HttpGet(path))
-	end)
-	return result
-end
-
-LuaParse = function(path)
-	return loadstring(game:HttpGet(path))()
 end
 
 local hashIP = nil
@@ -79,8 +64,7 @@ do
 
 	function APIService:getKeyURL(name, hwid)
 		-- Rewritten (Backward Compatible)
-		local dick = "https://pandadevelopment.net/getkey?service="..name.."&hwid="..hwid
-		return dick
+		return "https://pandadevelopment.net/getkey?service="..name.."&hwid="..hwid
 	end
 
 	function APIService:premiumKeyData(name, key, hwid)
@@ -100,7 +84,7 @@ do
 		-- ( PANDA REVERSED ENGINEERING API FOR MAGIXX KEY SYSTEM )
 		-- ============================================================
 		local response = request({
-			Url = "https://pandadevelopment.net/failsafeValidation?service=" .. service_name .. "&hwid=" hwid .. "&key="..keyString,
+			Url = "https://pandadevelopment.net/failsafeValidation?service=" .. service_name .. "&hwid="..hwid .. "&key="..key,
 			Method = "GET"
 		})
 		if response.StatusCode == 200 then
@@ -187,7 +171,7 @@ do
 		-- ============================================================
 		local service_name = string.lower(self.name)
 		local response = request({
-			Url = "https://pandadevelopment.net/failsafeValidation?service=" .. service_name .. "&hwid=" hwid .. "&key="..keyString,
+			Url = "https://pandadevelopment.net/failsafeValidation?service=" .. service_name .. "&hwid="..hwid .. "&key="..keyString,
 			Method = "GET"
 		})
 		if response.StatusCode == 200 then
@@ -218,3 +202,6 @@ do
 end
 
 return KeyLibrary
+
+
+-- Fixeeedd
