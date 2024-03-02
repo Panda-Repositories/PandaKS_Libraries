@@ -1,1 +1,11 @@
-
+{
+"Server_Domain": {
+  "Main_URL": "https://pandadevelopment.net",
+  "Backup_URL": "https://pandadevelopment.cloud"
+  },
+"API_Configuration": {
+  "v2_Library": "https://github.com/Panda-Repositories/PandaKS_Libraries/blob/main/library/LuaLib/ROBLOX/PandaBetaLib.lua",
+  "v3_Library": "https://github.com/Panda-Repositories/PandaKS_Libraries/blob/main/library/LuaLib/ROBLOX/PandaBetaLib.lua",
+  "v4_Library": "https://github.com/Panda-Repositories/PandaKS_Libraries/blob/main/library/LuaLib/ROBLOX/PandaBetaLib.lua"
+  }
+}
