@@ -1,6 +1,7 @@
 local PandaAuth = {}
 
 -- User Customizations
+getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
 getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
@@ -17,7 +18,7 @@ local _tostring = clonefunction(tostring)
 
 
 -- Server Domain
-local server_configuration = "https://pandadevelopment.net"
+local server_configuration = "https://pandadevelopment.cloud"
 
 -- Lua Lib Version
 local LibVersion = "v2.1.6_Release"
@@ -119,7 +120,7 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 	end
 	local Service_ID = string.lower(serviceID)
 	local response = request({
-		Url = "https://pandadevelopment.net/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
+		Url = server_configuration.."/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
 		Method = "GET"
 	})
 	if response.StatusCode == 200 then
@@ -152,7 +153,7 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
 		return true
 	end
 	local response = request({
-		Url = "https://pandadevelopment.net/failsafeValidation?service=" .. service_name .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
+		Url = server_configuration.."/failsafeValidation?service=" .. service_name .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
 		Method = "GET"
 	})
 	if response.StatusCode == 200 then
@@ -187,7 +188,7 @@ end
 -- Contributed from [ Hub Member: asrua ]
 function PandaAuth:ResetHardwareID(ServiceID, oldKey)
 	local service_name = string.lower(ServiceID)
-	for i,v in pairs(http_service:JSONDecode(request({Url = "https://pandadevelopment.net/serviceapi/edit/hwid/?service="..service_name.."&key=" .. oldKey .. "&newhwid=" .. game:GetService("RbxAnalyticsService"):GetClientId(), Method = "POST"}).Body)) do
+	for i,v in pairs(http_service:JSONDecode(request({Url = server_configuration.."/serviceapi/edit/hwid/?service="..service_name.."&key=" .. oldKey .. "&newhwid=" .. game:GetService("RbxAnalyticsService"):GetClientId(), Method = "POST"}).Body)) do
 		print(i, v)
 	end
 end
@@ -222,6 +223,23 @@ end
 function PandaAuth:SetWebsocket(IpAddress)
 	warn("This Feature is not available yet... Sorry")
 	print("Hi -> "..tostring(IpAddress))
+end
+
+function PandaAuth.new(service, data) -- for Magixx Compatibility
+    local Frame = {}
+    Frame.__index = Frame
+    
+    local setclipboard = set_clipboard or setclipboard or writeclipboard or write_clipboard
+
+    Frame.copyGetKeyURL = function() return setclipboard and setclipboard(PandaAuth:GetKey(service)) end
+    Frame.getKeyURL = function() return PandaAuth:GetKey(service) end
+
+    Frame.key = function(key) warn("PandaAuth doesn't support key data.") end
+    Frame.premiumKey = function(key) warn("PandaAuth doesn't support premium key data.") end
+    Frame.verifyKey = function(key) PandaAuth:ValidateKey(service, key) end
+    Frame.verifyDefaultKey = function(key) PandaAuth:ValidateNormalKey(service, key) end
+    Frame.verifyPremiumKey = function(key) PandaAuth:ValidatePremiumKey(service, key) end
+    return Frame
 end
 
 return PandaAuth
