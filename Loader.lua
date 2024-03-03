@@ -1,33 +1,33 @@
+local APILoader = {}
+
 local http_service = cloneref(game:GetService("HttpService"))
 local json = game:HttpGet("https://raw.githubusercontent.com/Panda-Repositories/PandaKS_Libraries/main/LibraryConfig/ApiServiceConfiguration.json") 
-
-function RunLibraries(version)
-  if version == "v3" then
-    mainUrl = configuration.API_Configuration.v3_Library
-  elseif version == "v4" then
-    mainUrl = configuration.API_Configuration.v4_Library
-  else
-    mainUrl = configuration.API_Configuration.v2_Library
-  end
-end
-
-
-
 local configuration = http_service:JSONDecode(json)
-
 local mainUrl = configuration.Server_Domain.Main_URL
 
--- Attempt to fetch the Main URL
-local success, response = pcall(function()
-    return game:HttpGet(mainUrl)
-end)
+function APILoader:RunLibraries(version)
+    local PandaAuth
 
-if success then
-    print("Main URL successfully fetched:", mainUrl)
-    -- Use the fetched URL
-    -- Your logic here
-else
-    print("Failed to fetch Main URL, falling back to Backup URL:", configuration.Server_Domain.Backup_URL)
-    mainUrl = configuration.Server_Domain.Backup_URL
-    -- Your logic here using the backup URL
+    if version == "v3" then
+        PandaAuth = loadstring(game:HttpGet(configuration.API_Configuration.v3_Library))()
+    elseif version == "v4" then
+        PandaAuth = loadstring(game:HttpGet(configuration.API_Configuration.v4_Library))()
+    else
+        PandaAuth = loadstring(game:HttpGet(configuration.API_Configuration.v2_Library))()
+    end
+
+    return PandaAuth
 end
+
+if getgenv().PelicanKeySys_Version == nil then
+  return APILoader:RunLibraries("v2")
+elseif getgenv().PelicanKeySys_Version == "v3" then
+  return APILoader:RunLibraries("v3")
+elseif getgenv().PelicanKeySys_Version == "v4" then
+  return APILoader:RunLibraries("v4")
+else
+  return APILoader:RunLibraries("v2")
+end
+
+
+return APILoader
