@@ -3,6 +3,11 @@
   "Main_URL": "https://pandadevelopment.net",
   "Backup_URL": "https://pandadevelopment.cloud"
   },
+"API_Versions": {
+    "Lua_Version": "V3.0.2_Eco",
+    "NodeJS_Version": "v1.0.1",
+    "Python_Version": "v1.0.3"
+},
 "API_Configuration": {
   "v2_Library": "https://github.com/Panda-Repositories/PandaKS_Libraries/blob/main/library/LuaLib/ROBLOX/PandaBetaLib.lua",
   "v3_Library": "https://github.com/Panda-Repositories/PandaKS_Libraries/blob/main/library/LuaLib/ROBLOX/PandaBetaLib.lua",
