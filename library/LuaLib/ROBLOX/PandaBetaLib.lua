@@ -21,7 +21,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://pandadevelopment.cloud"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.6_Release"
+local LibVersion = "v2.1.7_Release"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -119,6 +119,10 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 		return true
 	end
 	local Service_ID = string.lower(serviceID)
+	DebugText("____________________________________________________________")
+	DebugText("Information -> ["..Service_ID.."] - ["..ClientKey.."]")
+	DebugText("HWID -> "..GetHardwareID(Service_ID))
+	DebugText("____________________________________________________________")
 	local response = request({
 		Url = server_configuration.."/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
 		Method = "GET"
@@ -152,6 +156,10 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
 	if TemporaryAccess then
 		return true
 	end
+	DebugText("____________________________________________________________")
+	DebugText("Information -> ["..service_name.."] - ["..ClientKey.."]")
+	DebugText("HWID -> "..GetHardwareID(service_name))
+	DebugText("____________________________________________________________")
 	local response = request({
 		Url = server_configuration.."/failsafeValidation?service=" .. service_name .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
 		Method = "GET"
@@ -236,9 +244,9 @@ function PandaAuth.new(service, data) -- for Magixx Compatibility
 
     Frame.key = function(key) warn("PandaAuth doesn't support key data.") end
     Frame.premiumKey = function(key) warn("PandaAuth doesn't support premium key data.") end
-    Frame.verifyKey = function(key) PandaAuth:ValidateKey(service, key) end
-    Frame.verifyDefaultKey = function(key) PandaAuth:ValidateNormalKey(service, key) end
-    Frame.verifyPremiumKey = function(key) PandaAuth:ValidatePremiumKey(service, key) end
+    Frame.verifyKey = function(key) return PandaAuth:ValidateKey(service, key) end
+    Frame.verifyDefaultKey = function(key) return PandaAuth:ValidateNormalKey(service, key) end
+    Frame.verifyPremiumKey = function(key) return PandaAuth:ValidatePremiumKey(service, key) end
     return Frame
 end
 
