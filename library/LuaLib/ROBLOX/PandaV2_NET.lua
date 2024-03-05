@@ -5,7 +5,7 @@ local PandaAuth = {}
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
 getgenv().AllowLibNotification = true
-getgenv().CustomLogo = "5179834402"
+getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
 local TemporaryAccess = false
@@ -19,36 +19,10 @@ local _tostring = clonefunction(tostring)
 
 
 -- Server Domain
-
-local function GetRegisteredDomain()
-	local domains = [
-		'.net',
-		'.cloud'
-	]
-	for i,v in pairs(domains) do
-		local possibleurl = 'https://pandadevelopment'..v
-		local response = request({
-			Url = possibleurl,
-			Method = "GET"
-		})
-		if response.StatusCode == 200 then
-			return possibleurl;
-		end
-	end
-	starter_gui_service:SetCore("SendNotification", {
-		Title = "Key System Error (Please Send this to the developer)",
-		Text = "Error Code (D0MAIN_401)",
-		Duration = 10,
-		Icon = "rbxassetid://5179834402"
-	})
-	return 'https://pandadevelopment.net'
-end
-
-local server_configuration = GetRegisteredDomain();
-
+local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.8_Beta (Multi-Domain)"
+local LibVersion = "v2.1.8_Release (Cloud Domain)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
