@@ -22,7 +22,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.8_Release (Auto)"
+local LibVersion = "v2.5.0_Beta (03-06-2024)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -115,40 +115,7 @@ function PandaAuth:GetResponseSummary()
 	end
 end
 
-function PandaAuth:AuthorizedKyRBLX(serviceID, ClientKey, isPremium)
-	if TemporaryAccess then
-		return true
-	end
-	local Service_ID = string.lower(serviceID)
-	local client_id = rbx_analytics_service:GetClientId()
-	local response = request({
-		Url = server_configuration.."/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..client_id .. "&key="..ClientKey,
-		Method = "GET"
-	})
-	if response.StatusCode == 200 then
-		-- Instead of fucking finding a string true... why do this
-		local success, data = pcall(function()
-			return http_service:JSONDecode(response.Body)
-		end)
-		if success and data["status"] == "success" then
-			if isPremium then
-				if data["isPremium"] == true then
-					return true
-				else
-					return false
-				end
-			else
-				return true
-			end
-		end
-		return false
-	else
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		warn("Server Response: " .. response.StatusCode)
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		return false
-	end
-end
+
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
 	if TemporaryAccess then
@@ -213,6 +180,18 @@ end
 function PandaAuth:ValidateNormalKey(service_name, Key)
 	local bruh = PandaAuth:ValidateKey(service_name, Key)
 	return bruh
+end
+
+function PandaAuth:AuthorizedKyRBLX(serviceID, ClientKey, isPremium)
+	if TemporaryAccess then
+		return true
+	end
+	if isPremium then
+		return PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
+	else
+		return PandaAuth:ValidateKey(serviceID, ClientKey)
+	end
+
 end
 
 -- Contributed from [ Hub Member: asrua ]
