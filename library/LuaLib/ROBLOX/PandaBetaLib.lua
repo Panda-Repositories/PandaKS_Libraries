@@ -123,7 +123,7 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 	end
 	local Service_ID = string.lower(serviceID)
 	DebugText("____________________________________________________________")
-	DebugText("Information -> ["..Service_ID.."] - ["..ClientKey.."]")
+	DebugText("Information -> ["..tostring(Service_ID).."] - ["..tostring(ClientKey).."]")
 	DebugText("HWID -> "..GetHardwareID(Service_ID))
 	DebugText("____________________________________________________________")
 	local response = request({
@@ -237,7 +237,7 @@ end
 function PandaAuth.new(service, data) -- for Magixx Compatibility
     local Frame = {}
     Frame.__index = Frame
-    
+    print("Data: "..tostring(data))
     local setclipboard = set_clipboard or setclipboard or writeclipboard or write_clipboard
 
     Frame.copyGetKeyURL = function() return setclipboard and setclipboard(PandaAuth:GetKey(service)) end
