@@ -8,7 +8,7 @@ getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
-local TemporaryAccess = true
+local TemporaryAccess = false
 
 -- Roblox Lua Services
 local http_service = cloneref(game:GetService("HttpService"))
@@ -22,7 +22,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.8_Release (NET Domain)"
+local LibVersion = "v2.1.8_Release (Auto)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
