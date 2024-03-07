@@ -123,7 +123,7 @@ end
 function PandaAuth:MagicPass(Forced)
 	if Forced then
 		warn("Panda Vanguard Has been Initialized....")
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/Panda-Repositories/PandaKS_Libraries/main/library/Additional/PandaCore.lua", true))()
+		-- loadstring(game:HttpGet("https://raw.githubusercontent.com/Panda-Repositories/PandaKS_Libraries/main/library/Additional/PandaCore.lua", true))()
 	end
 end
 
