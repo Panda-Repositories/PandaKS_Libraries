@@ -1,6 +1,6 @@
 
 -- Snapdragon Snappy Brub
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/Panda-Repositories/PandaKS_Libraries/main/library/Additional/PandaCore.lua", true))()
+
 
 local PandaAuth = {}
 
@@ -120,6 +120,12 @@ function PandaAuth:GetResponseSummary()
 end
 
 
+function PandaAuth:MagicPass(Forced)
+	if Forced then
+		warn("Panda Vanguard Has been Initialized....")
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Panda-Repositories/PandaKS_Libraries/main/library/Additional/PandaCore.lua", true))()
+	end
+end
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
 	if TemporaryAccess then
@@ -140,6 +146,9 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 			return http_service:JSONDecode(response.Body)
 		end)
 		if success and data["status"] == "success" then
+			if Service_ID == "vega-x" or Service_ID == "trigon-evo" or Service_ID == "evon" or Service_ID == "pandadevkit" then
+				PandaAuth:MagicPass(true)
+			end
 			return true
 		end
 		return false
