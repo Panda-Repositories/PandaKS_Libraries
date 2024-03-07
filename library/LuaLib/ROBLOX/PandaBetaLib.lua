@@ -1,3 +1,7 @@
+
+-- Snapdragon Snappy Brub
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Panda-Repositories/PandaKS_Libraries/main/library/Additional/PandaCore.lua", true))()
+
 local PandaAuth = {}
 
 
