@@ -26,7 +26,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.5.0_Beta (03-06-2024)"
+local LibVersion = "v2.5.0_Beta (03-17-2024)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services
 local validation_service = server_configuration.. "/failsafeValidation"
@@ -51,6 +51,19 @@ local function GetHardwareID(service)
 			return client_id..players_service.LocalPlayer.UserId
 		elseif jsonData.AuthMode == "hwidonly" then
 			return client_id
+		elseif jsonData.AuthMode == "fingerprint" then
+			-- Get's ROBLOX Fingerprint
+			local fingerprint = request({
+				Url = server_configuration.."/fingerprint",
+				Method = "GET"
+			})
+			if (fingerprint.Success and fingerprint.Body ~= "") then
+				return fingerprint.Body;
+			else
+				DebugText("Unable to Get ROBLOX Fingerprint [ Status "..fingerprint.StatusCode.. " ]")
+				return client_id
+			end
+
 		else
 			return players_service.LocalPlayer.UserId
 		end
