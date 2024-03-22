@@ -25,7 +25,6 @@ local _tostring = clonefunction(tostring)
 -- Server Domain
 local server_configuration = "https://pandadevelopment.net"
 
-n
 -- Lua Lib Version
 local LibVersion = "v2.5.0_Beta (03-17-2024)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
