@@ -23,8 +23,9 @@ local _tostring = clonefunction(tostring)
 
 
 -- Server Domain
-local server_configuration = "https://pandadevelopment.net"
+local server_configuration = "https://test.pandadevelopment.net"
 
+n
 -- Lua Lib Version
 local LibVersion = "v2.5.0_Beta (03-17-2024)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
@@ -37,7 +38,6 @@ function DebugText(text)
 		print("[ Developer Mode ] - "..text)
 	end
 end
-
 
 local function GetHardwareID(service)
 	local client_id = rbx_analytics_service:GetClientId()
