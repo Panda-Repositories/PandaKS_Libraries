@@ -23,7 +23,7 @@ local _tostring = clonefunction(tostring)
 
 
 -- Server Domain
-local server_configuration = "https://test.pandadevelopment.net"
+local server_configuration = "https://pandadevelopment.net"
 
 n
 -- Lua Lib Version
