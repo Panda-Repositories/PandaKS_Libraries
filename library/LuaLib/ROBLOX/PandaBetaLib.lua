@@ -12,7 +12,7 @@ getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
-local TemporaryAccess = false
+local TemporaryAccess = true
 
 -- Roblox Lua Services
 local http_service = cloneref(game:GetService("HttpService"))
