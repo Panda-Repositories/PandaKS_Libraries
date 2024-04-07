@@ -202,9 +202,14 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
 	end
 end
 
+
 function PandaAuth:ValidateNormalKey(service_name, Key)
 	local bruh = PandaAuth:ValidateKey(service_name, Key)
 	return bruh
+end
+
+function PandaAuth:Authenticate_Keyless(service_name)
+	return PandaAuth:ValidateKey(service_name, "keyless")
 end
 
 function PandaAuth:AuthorizedKyRBLX(serviceID, ClientKey, isPremium)
