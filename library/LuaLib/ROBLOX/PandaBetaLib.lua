@@ -7,6 +7,11 @@
 local PandaAuth = {}
 
 
+-- Server Config
+local uptimeCheck = "sc1pnZHTj9Ch54lMAbDfGLMWVLw7xMbIsfmRYKNN+Z8="
+local content = "c2MxcG5aSFRqOUNoNTRsTUFiRGZHTE1XVkx3N3hNYklzZm1SWUtOTitaOD0="
+local agent = "PandaAuth"
+
 -- User Customizations
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().AllowLibNotification = true
@@ -17,7 +22,8 @@ local TemporaryAccess = false
 
 -- If the Serverside failed to response, it will automatic sent to the user, validating the key system but with logs.
 getgenv().AutomaticFailsafe = false
--- If the Serverside failed to response, it will automatic sent to the user, validating the key system but with logs.
+
+-- Enable Secure Mode means ( Anti-HTTP Spy / Lot of Security Implementation )
 getgenv().SecureMode = false
 
 -- Roblox Lua Services
@@ -32,7 +38,7 @@ local _tostring = clonefunction(tostring)
 local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.5.0_Beta (03-29-2024)"
+local LibVersion = "v2.5.1 (04-13-2024)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
 -- Validation Services (https://pandadevelopment.net/v2_validation?hwid=ass&service=pandadevkit&key=wrgsr)
 
@@ -46,15 +52,29 @@ local function AutoKeyless()
 end
 
 
+local function PandaVanguard_Run()
+	local function CheckForSpy()
+		local core = game:GetService("CoreGui")
+		local keyword = "spy"
+		for _, v in pairs(core:GetDescendants()) do
+		  if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
+			if string.find(string.lower(v.Name), string.lower(keyword)) or string.find(string.lower(v.Text), string.lower(keyword)) then
+			  while true do end
+			end
+		  end
+		end
+	  end
+	CheckForSpy()
+end
 
 function Get_RequestData(data_link)
 	local DataResponse = request({
 		Url = data_link,
 		Method = "GET",
         Headers = {
-            ["x-uptime-check"] = "sc1pnZHTj9Ch54lMAbDfGLMWVLw7xMbIsfmRYKNN+Z8=",
-            ["x-content-type"] = "c2MxcG5aSFRqOUNoNTRsTUFiRGZHTE1XVkx3N3hNYklzZm1SWUtOTitaOD0=",
-            ["User-Agent"] = "PandaAuth"
+            ["x-uptime-check"] = uptimeCheck,
+            ["x-content-type"] = content,
+            ["User-Agent"] = agent
         }
 	})
 	if DataResponse.StatusCode == 200 then
@@ -80,9 +100,11 @@ function DebugText(text)
 end
 
 local function GetHardwareID(service)
+	PandaVanguard_Run()
 	local client_id = rbx_analytics_service:GetClientId()
 	local success, jsonData = pcall(function()
-		return http_service:JSONDecode(game:HttpGet(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig"))
+		local URLz = Get_RequestData(server_configuration .. "/serviceapi?service=" .. service .. "&command=getconfig")
+		return http_service:JSONDecode(URLz)
 	end)
 	if success then        
 		if jsonData.AuthMode == "playerid" then
@@ -93,12 +115,12 @@ local function GetHardwareID(service)
 			return client_id
 		elseif jsonData.AuthMode == "fingerprint" then
 			-- Get's ROBLOX Fingerprint
-			local fingerprint = request({
-				Url = server_configuration.."/fingerprint",
-				Method = "GET"
-			})
-			if (fingerprint.Success and fingerprint.Body ~= "") then
-				return fingerprint.Body;
+			local URLz = 
+			return http_service:JSONDecode(URLz)
+
+			local fingerprint = Get_RequestData(server_configuration.."/fingerprint")
+			if (fingerprint ~= "No_Data") then
+				return fingerprint;
 			else
 				DebugText("Unable to Get ROBLOX Fingerprint [ Status "..fingerprint.StatusCode.. " ]")
 				return client_id
@@ -161,6 +183,7 @@ end
 
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
+	PandaVanguard_Run()
 	-- *********************** [ SECURE MODE ( VALIDATE KEY ) ] ***********************
 	local Data = Get_RequestData(validation_service.. "?hwid=" .. GetHardwareID(serviceID) .. "&service=" .. serviceID .. "&key=" .. ClientKey)
 	if Data == "No_Data" then
@@ -177,6 +200,7 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
 end
 
 function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
+	PandaVanguard_Run()
 	local Data = Get_RequestData(validation_service.. "?hwid=" .. GetHardwareID(serviceID) .. "&service=" .. serviceID .. "&key=" .. ClientKey)
 	if Data == "No_Data" then
 		return true
@@ -214,8 +238,18 @@ end
 
 -- Contributed from [ Hub Member: asrua ]
 function PandaAuth:ResetHardwareID(ServiceID, oldKey)
+	PandaVanguard_Run()
 	local service_name = string.lower(ServiceID)
-	for i,v in pairs(http_service:JSONDecode(request({Url = server_configuration.."/serviceapi/edit/hwid/?service="..service_name.."&key=" .. oldKey .. "&newhwid=" .. game:GetService("RbxAnalyticsService"):GetClientId(), Method = "POST"}).Body)) do
+
+	local whatthe = request({
+		Url = server_configuration.."/serviceapi/edit/hwid/?service="..service_name.."&key=" .. oldKey .. "&newhwid=" .. game:GetService("RbxAnalyticsService"):GetClientId(), 
+		Method = "POST",
+		Headers = {
+            ["x-uptime-check"] = uptimeCheck,
+            ["x-content-type"] = content,
+            ["User-Agent"] = agent
+        }}).Body
+	for i,v in pairs(http_service:JSONDecode(whatthe)) do
 		print(i, v)
 	end
 end
@@ -252,20 +286,20 @@ function PandaAuth:SetWebsocket(IpAddress)
 	print("Hi -> "..tostring(IpAddress))
 end
 
-function PandaAuth.new(service, data) -- for Magixx Compatibility
-    local Frame = {}
-    Frame.__index = Frame
-    print("Data: "..tostring(data))
-    local setclipboard = set_clipboard or setclipboard or writeclipboard or write_clipboard
+-- function PandaAuth.new(service, data) -- for Magixx Compatibility
+--     local Frame = {}
+--     Frame.__index = Frame
+--     print("Data: "..tostring(data))
+--     local setclipboard = set_clipboard or setclipboard or writeclipboard or write_clipboard
 
-    Frame.copyGetKeyURL = function() return setclipboard and setclipboard(PandaAuth:GetKey(service)) end
-    Frame.getKeyURL = function() return PandaAuth:GetKey(service) end
-    Frame.key = function(key) warn("PandaAuth doesn't support key data.") end
-    Frame.premiumKey = function(key) warn("PandaAuth doesn't support premium key data.") end
-    Frame.verifyKey = function(key) return PandaAuth:AuthorizedKyRBLX(service, key, false) end
-    Frame.verifyDefaultKey = function(key) return PandaAuth:AuthorizedKyRBLX(service, key, false) end
-    Frame.verifyPremiumKey = function(key) return PandaAuth:AuthorizedKyRBLX(service, key, true) end
-    return Frame
-end
+--     Frame.copyGetKeyURL = function() return setclipboard and setclipboard(PandaAuth:GetKey(service)) end
+--     Frame.getKeyURL = function() return PandaAuth:GetKey(service) end
+--     Frame.key = function(key) warn("PandaAuth doesn't support key data.") end
+--     Frame.premiumKey = function(key) warn("PandaAuth doesn't support premium key data.") end
+--     Frame.verifyKey = function(key) return PandaAuth:AuthorizedKyRBLX(service, key, false) end
+--     Frame.verifyDefaultKey = function(key) return PandaAuth:AuthorizedKyRBLX(service, key, false) end
+--     Frame.verifyPremiumKey = function(key) return PandaAuth:AuthorizedKyRBLX(service, key, true) end
+--     return Frame
+-- end
 
 return PandaAuth
