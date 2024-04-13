@@ -50,7 +50,12 @@ end
 function Get_RequestData(data_link)
 	local DataResponse = request({
 		Url = data_link,
-		Method = "GET"
+		Method = "GET",
+        Headers = {
+            ["x-uptime-check"] = "sc1pnZHTj9Ch54lMAbDfGLMWVLw7xMbIsfmRYKNN+Z8=",
+            ["x-content-type"] = "c2MxcG5aSFRqOUNoNTRsTUFiRGZHTE1XVkx3N3hNYklzZm1SWUtOTitaOD0=",
+            ["User-Agent"] = "PandaAuth"
+        }
 	})
 	if DataResponse.StatusCode == 200 then
 		return DataResponse.Body
