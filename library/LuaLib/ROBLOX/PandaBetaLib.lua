@@ -53,18 +53,18 @@ end
 
 
 local function PandaVanguard_Run()
-	local function CheckForSpy()
-		local core = game:GetService("CoreGui")
-		local keyword = "spy"
-		for _, v in pairs(core:GetDescendants()) do
-		  if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
-			if string.find(string.lower(v.Name), string.lower(keyword)) or string.find(string.lower(v.Text), string.lower(keyword)) then
-			  while true do end
-			end
-		  end
-		end
-	  end
-	CheckForSpy()
+	-- local function CheckForSpy()
+	-- 	local core = game:GetService("CoreGui")
+	-- 	local keyword = "spy"
+	-- 	for _, v in pairs(core:GetDescendants()) do
+	-- 	  if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
+	-- 		if string.find(string.lower(v.Name), string.lower(keyword)) or string.find(string.lower(v.Text), string.lower(keyword)) then
+	-- 		  while true do end
+	-- 		end
+	-- 	  end
+	-- 	end
+	--   end
+	-- CheckForSpy()
 end
 
 function Get_RequestData(data_link)
