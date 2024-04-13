@@ -14,7 +14,7 @@ local agent = "PandaAuth"
 
 -- User Customizations
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-getgenv().AllowLibNotification = true
+getgenv().AllowLibNotification = false
 getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
