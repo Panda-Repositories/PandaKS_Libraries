@@ -55,15 +55,13 @@ function Get_RequestData(data_link)
 	if DataResponse.StatusCode == 200 then
 		return DataResponse.Body
 	else
-		local CodeStatus = response.StatusCode;
+		local CodeStatus = DataResponse.StatusCode;
 		if CodeStatus == 429 then
-			warn("[Panda Auth] - Too many requests, please try again later. [" .. response.StatusCode .. "]")
+			warn("[Panda Auth] - Too many requests, please try again later. [" .. DataResponse.StatusCode .. "]")
 		elseif CodeStatus == 500 then
-			warn("[Panda Auth] - Internal Error. [" .. response.StatusCode .. "]")
+			warn("[Panda Auth] - Internal Error. [" .. DataResponse.StatusCode .. "]")
 		elseif CodeStatus == 403 then
-			warn("[Panda Auth] - Unable to Access the Server. [" .. response.StatusCode .. "]")
-		else CodeStatus == 500 then
-			warn("[Panda Auth] - Internal Error. [" .. response.StatusCode .. "]")
+			warn("[Panda Auth] - Unable to Access the Server. [" .. DataResponse.StatusCode .. "]")
 		end
 		return "No_Data"
 	end
