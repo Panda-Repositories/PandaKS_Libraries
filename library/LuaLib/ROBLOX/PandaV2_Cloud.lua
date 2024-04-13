@@ -1,14 +1,24 @@
+--[[
+	Changelogs (04-12-2024)
+	* Added Exception Handling to Key System ( Validation ). If the serverside failed, it will automatic verifies the key system
+	* Bug Fixes
+	* YEAAA.. Magicc
+]]
 local PandaAuth = {}
 
 
 -- User Customizations
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-
 getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
 getgenv().DebugMode = false
 
 local TemporaryAccess = false
+
+-- If the Serverside failed to response, it will automatic sent to the user, validating the key system but with logs.
+getgenv().AutomaticFailsafe = false
+-- If the Serverside failed to response, it will automatic sent to the user, validating the key system but with logs.
+getgenv().SecureMode = false
 
 -- Roblox Lua Services
 local http_service = cloneref(game:GetService("HttpService"))
@@ -19,13 +29,45 @@ local _tostring = clonefunction(tostring)
 
 
 -- Server Domain
-local server_configuration = "https://pandadevelopment.cloud"
+local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
-local LibVersion = "v2.1.8_Release (Cloud Domain)"
+local LibVersion = "v2.5.0_Beta (03-29-2024)"
 -- warn("Panda-Pelican Libraries Loaded ( "..LibVersion.." )")
--- Validation Services
-local validation_service = server_configuration.. "/failsafeValidation"
+-- Validation Services (https://pandadevelopment.net/v2_validation?hwid=ass&service=pandadevkit&key=wrgsr)
+
+local validation_service = server_configuration.. "/v2_validation"
+
+local function AutoKeyless()
+	if getgenv().AutomaticFailsafe == true then
+		-- Generate a Log / Log the User Details
+		return true
+	end
+end
+
+
+
+function Get_RequestData(data_link)
+	local DataResponse = request({
+		Url = data_link,
+		Method = "GET"
+	})
+	if DataResponse.StatusCode == 200 then
+		return DataResponse.Body
+	else
+		local CodeStatus = response.StatusCode;
+		if CodeStatus == 429 then
+			warn("[Panda Auth] - Too many requests, please try again later. [" .. response.StatusCode .. "]")
+		elseif CodeStatus == 500 then
+			warn("[Panda Auth] - Internal Error. [" .. response.StatusCode .. "]")
+		elseif CodeStatus == 403 then
+			warn("[Panda Auth] - Unable to Access the Server. [" .. response.StatusCode .. "]")
+		else CodeStatus == 500 then
+			warn("[Panda Auth] - Internal Error. [" .. response.StatusCode .. "]")
+		end
+		return "No_Data"
+	end
+end
 
 
 function DebugText(text)
@@ -33,7 +75,6 @@ function DebugText(text)
 		print("[ Developer Mode ] - "..text)
 	end
 end
-
 
 local function GetHardwareID(service)
 	local client_id = rbx_analytics_service:GetClientId()
@@ -47,6 +88,19 @@ local function GetHardwareID(service)
 			return client_id..players_service.LocalPlayer.UserId
 		elseif jsonData.AuthMode == "hwidonly" then
 			return client_id
+		elseif jsonData.AuthMode == "fingerprint" then
+			-- Get's ROBLOX Fingerprint
+			local fingerprint = request({
+				Url = server_configuration.."/fingerprint",
+				Method = "GET"
+			})
+			if (fingerprint.Success and fingerprint.Body ~= "") then
+				return fingerprint.Body;
+			else
+				DebugText("Unable to Get ROBLOX Fingerprint [ Status "..fingerprint.StatusCode.. " ]")
+				return client_id
+			end
+
 		else
 			return players_service.LocalPlayer.UserId
 		end
@@ -86,6 +140,7 @@ function PandaAuth:GetKey(Exploit)
 	DebugText("Get Key: "..user_link)
 	return user_link
 end
+
 function PandaAuth:GetLink(Exploit)
 	if TemporaryAccess then
 		local TempKey = server_configuration .. "/getkey?service=" .. Exploit .. "&hwid=" .. players_service.LocalPlayer.UserId;
@@ -101,118 +156,57 @@ function PandaAuth:GetLink(Exploit)
 	return user_link
 end
 
--- New Function ( GetResponseSummary() )
-function PandaAuth:GetResponseSummary()
-	local success, data = pcall(function()
-		return http_service:JSONDecode(readfile("Panda_AuthSummary.json"))
-	end)
 
-	if success then
-		return data["code"]
-	else
-		warn("Failed to Get Summary Result :skull:")
-		return ""
+function PandaAuth:ValidateKey(serviceID, ClientKey)
+	-- *********************** [ SECURE MODE ( VALIDATE KEY ) ] ***********************
+	local Data = Get_RequestData(validation_service.. "?hwid=" .. GetHardwareID(serviceID) .. "&service=" .. serviceID .. "&key=" .. ClientKey)
+	if Data == "No_Data" then
+		-- Switches to Pastebin-based Key System
+		return true
 	end
+	local success, data = pcall(function()
+		return http_service:JSONDecode(Data)
+	end)
+	if success and data["Authentication"] == "success" then
+		return true
+	end
+	return false
+end
+
+function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
+	local Data = Get_RequestData(validation_service.. "?hwid=" .. GetHardwareID(serviceID) .. "&service=" .. serviceID .. "&key=" .. ClientKey)
+	if Data == "No_Data" then
+		return true
+	end
+	local success, data = pcall(function()
+		return http_service:JSONDecode(Data)
+	end)
+	if success and data["Authentication"] == "success" and data["Key_Information"]["Premium_Mode"] == true then
+		return true
+	end
+	return false
+end
+
+
+function PandaAuth:ValidateNormalKey(service_name, Key)
+	local bruh = PandaAuth:ValidateKey(service_name, Key)
+	return bruh
+end
+
+function PandaAuth:Authenticate_Keyless(service_name)
+	return PandaAuth:ValidateKey(service_name, "keyless")
 end
 
 function PandaAuth:AuthorizedKyRBLX(serviceID, ClientKey, isPremium)
 	if TemporaryAccess then
 		return true
 	end
-	local Service_ID = string.lower(serviceID)
-	local client_id = rbx_analytics_service:GetClientId()
-	local response = request({
-		Url = server_configuration.."/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..client_id .. "&key="..ClientKey,
-		Method = "GET"
-	})
-	if response.StatusCode == 200 then
-		-- Instead of fucking finding a string true... why do this
-		local success, data = pcall(function()
-			return http_service:JSONDecode(response.Body)
-		end)
-		if success and data["status"] == "success" then
-			if isPremium then
-				if data["isPremium"] == true then
-					return true
-				else
-					return false
-				end
-			else
-				return true
-			end
-		end
-		return false
+	if isPremium then
+		return PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
 	else
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		warn("Server Response: " .. response.StatusCode)
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		return false
+		return PandaAuth:ValidateKey(serviceID, ClientKey)
 	end
-end
 
-function PandaAuth:ValidateKey(serviceID, ClientKey)
-	if TemporaryAccess then
-		return true
-	end
-	local Service_ID = string.lower(serviceID)
-	DebugText("____________________________________________________________")
-	DebugText("Information -> ["..Service_ID.."] - ["..ClientKey.."]")
-	DebugText("HWID -> "..GetHardwareID(Service_ID))
-	DebugText("____________________________________________________________")
-	local response = request({
-		Url = server_configuration.."/failsafeValidation?service=" .. Service_ID .. "&hwid=" ..GetHardwareID(Service_ID) .. "&key="..ClientKey,
-		Method = "GET"
-	})
-	if response.StatusCode == 200 then
-		-- Instead of fucking finding a string true... why do this
-		local success, data = pcall(function()
-			return http_service:JSONDecode(response.Body)
-		end)
-		if success and data["status"] == "success" then
-			return true
-		end
-		return false
-	else
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		warn("Server Response: " .. response.StatusCode)
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		return false
-	end
-end
-
-function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
-	local service_name = string.lower(serviceID)
-	if TemporaryAccess then
-		return true
-	end
-	DebugText("____________________________________________________________")
-	DebugText("Information -> ["..service_name.."] - ["..ClientKey.."]")
-	DebugText("HWID -> "..GetHardwareID(service_name))
-	DebugText("____________________________________________________________")
-	local response = request({
-		Url = server_configuration.."/failsafeValidation?service=" .. service_name .. "&hwid=" ..GetHardwareID(service_name) .. "&key="..ClientKey,
-		Method = "GET"
-	})
-	if response.StatusCode == 200 then
-		-- Instead of fucking finding a string true... why do this
-		local success, data = pcall(function()
-			return http_service:JSONDecode(response.Body)
-		end)
-		if success and data["status"] == "success" and data["isPremium"] == true then
-			return true
-		end
-		return false
-	else
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		warn("Server Response: " .. response.StatusCode)
-		warn("- - - - - - - - - - - - - - - - - - - - - - - ")
-		return false
-	end
-end
-
-function PandaAuth:ValidateNormalKey(service_name, Key)
-	local bruh = PandaAuth:ValidateKey(service_name, Key)
-	return bruh
 end
 
 -- Contributed from [ Hub Member: asrua ]
@@ -258,7 +252,7 @@ end
 function PandaAuth.new(service, data) -- for Magixx Compatibility
     local Frame = {}
     Frame.__index = Frame
-    
+    print("Data: "..tostring(data))
     local setclipboard = set_clipboard or setclipboard or writeclipboard or write_clipboard
 
     Frame.copyGetKeyURL = function() return setclipboard and setclipboard(PandaAuth:GetKey(service)) end
