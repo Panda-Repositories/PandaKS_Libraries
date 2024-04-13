@@ -8,9 +8,9 @@ local PandaAuth = {}
 
 
 -- Server Config
-local uptimeCheck = "sc1pnZHTj9Ch54lMAbDfGLMWVLw7xMbIsfmRYKNN+Z8="
-local content = "c2MxcG5aSFRqOUNoNTRsTUFiRGZHTE1XVkx3N3hNYklzZm1SWUtOTitaOD0="
-local agent = "PandaAuth"
+local uptimeCheck = "sc1pnzhtj9ch54lmabdfglmwvlw7xmbisfmryknnz8"
+local content = "c2mxcg5asfrqounontrstufirgzhte1xvkx3n3hnyklzzm1swutotitaod0"
+local agent = "pandaauth"
 
 -- User Customizations
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
@@ -79,7 +79,7 @@ function Get_RequestData(data_link)
         Headers = {
             ["x-uptime-check"] = uptimeCheck,
             ["x-content-type"] = content,
-            ["User-Agent"] = agent
+            ["user-agent"] = agent
         }
 	})
 	DeezBug(DataResponse.StatusCode)
@@ -225,7 +225,7 @@ function PandaAuth:ResetHardwareID(ServiceID, oldKey)
 		Headers = {
             ["x-uptime-check"] = uptimeCheck,
             ["x-content-type"] = content,
-            ["User-Agent"] = agent
+            ["user-agent"] = agent
         }}).Body
 	for i,v in pairs(http_service:JSONDecode(whatthe)) do
 		print(i, v)
