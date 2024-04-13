@@ -67,7 +67,12 @@ local function PandaVanguard_Run()
 	-- CheckForSpy()
 end
 
+local function DeezBug(text)
+	print("[Debug] - ".. text)
+end
+
 function Get_RequestData(data_link)
+	DeezBug(data_link)
 	local DataResponse = request({
 		Url = data_link,
 		Method = "GET",
@@ -77,6 +82,7 @@ function Get_RequestData(data_link)
             ["User-Agent"] = agent
         }
 	})
+	DeezBug(DataResponse.StatusCode)
 	if DataResponse.StatusCode == 200 then
 		return DataResponse.Body
 	else
@@ -87,6 +93,9 @@ function Get_RequestData(data_link)
 			warn("[Panda Auth] - Internal Error. [" .. DataResponse.StatusCode .. "]")
 		elseif CodeStatus == 403 then
 			warn("[Panda Auth] - Unable to Access the Server. [" .. DataResponse.StatusCode .. "]")
+			DeezBug(DataResponse.Body)
+		else
+			warn("[Panda Auth] - Unknown Error on Server. [" .. DataResponse.StatusCode .. "]")
 		end
 		return "No_Data"
 	end
