@@ -13,7 +13,7 @@ getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipbo
 getgenv().AllowLibNotification = true
 getgenv().CustomLogo = "14317130710"
 
-local TemporaryAccess = true
+local TemporaryAccess = false
 
 -- If the Serverside failed to respond, it will automatically send to the user, validating the key system but with logs.
 getgenv().AutomaticFailsafe = false
@@ -32,7 +32,7 @@ local players_service = cloneref(game:GetService("Players"))
 local _tostring = clonefunction(tostring)
 
 -- Server Domain
-local server_configuration = "https://pandadevelopment.net"
+local server_configuration = "https://test.pandadevelopment.net"
 
 -- Lua Lib Version
 local LibVersion = "v2.5.90 (05-30-2024)"
