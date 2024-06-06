@@ -32,7 +32,7 @@ local players_service = cloneref(game:GetService("Players"))
 local _tostring = clonefunction(tostring)
 
 -- Server Domain
-local server_configuration = "https://test.pandadevelopment.net"
+local server_configuration = "https://pandadevelopment.net"
 
 -- Lua Lib Version
 local LibVersion = "v2.5.90 (05-30-2024)"
