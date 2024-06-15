@@ -109,6 +109,7 @@ local function PandaLibNotification(message)
 end
 
 local function Get_RequestData(data_link)
+	warn(data_link)
 	if getgenv().Panda_ProcessingStat then
 		warn('Your Command has been Throttle, Please Wait....')
 		return "No_Data"
@@ -130,18 +131,11 @@ local function Get_RequestData(data_link)
 	if DataResponse.StatusCode == 200 then
 		return DataResponse.Body
 	else
-		-- Compatibility Method
-		local CompatibilityModeRequest = request({
-			Url = data_link,
-			Method = "GET",
-		})
-		if CompatibilityModeRequest.StatusCode == 200 then
-			return CompatibilityModeRequest.Body
-		elseif CompatibilityModeRequest.StatusCode == 429 then
+		if DataResponse.StatusCode == 429 then
 			-- Too many requests
-		elseif CompatibilityModeRequest.StatusCode == 500 then
+		elseif DataResponse.StatusCode == 500 then
 			-- Internal Error
-		elseif CompatibilityModeRequest.StatusCode == 403 then
+		elseif DataResponse.StatusCode == 403 then
 			-- Unable to Access the Server
 		else
 			-- Unknown Error on Server
