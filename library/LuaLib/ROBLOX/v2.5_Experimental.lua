@@ -144,8 +144,8 @@ local function Get_RequestData(data_link)
 	end
 end
 
-local function GetUserSecMode(KeyAPI, service) 
-	local DataRaw = Get_RequestData(server_configuration .. "/serviceapi?service=" .. service .. "&command=fetchclientinfo");
+local function GetUserSecMode(Fattass, KeyAPI) 
+	local DataRaw = Get_RequestData(server_configuration .. "/serviceapi?service=" .. Fattass .. "&command=fetchclientinfo");
 	if DataRaw == "No_Data" then
 		PandaLibNotification("Unable to Contact the Server. Please Try Again")
 		return "nillo"
