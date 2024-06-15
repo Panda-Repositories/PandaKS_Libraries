@@ -150,6 +150,7 @@ local function GetUserSecMode(Fattass, KeyAPI)
 		PandaLibNotification("Unable to Contact the Server. Please Try Again")
 		return "nillo"
 	end
+	print("IP: ".. DataRaw)
 	local plaintextBytes = stringToBytes(DataRaw)
 	local encryptedBytes = vigenereEncryptBytes(plaintextBytes, KeyAPI)
 	local encryptedText = bytesToHex(encryptedBytes)
