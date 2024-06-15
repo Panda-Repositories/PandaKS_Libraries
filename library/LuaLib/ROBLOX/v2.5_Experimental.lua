@@ -1,4 +1,3 @@
--- Test only
 -- Path: /mnt/data/readme.md
 local PandaAuth = {}
 
@@ -131,11 +130,18 @@ local function Get_RequestData(data_link)
 	if DataResponse.StatusCode == 200 then
 		return DataResponse.Body
 	else
-		if DataResponse.StatusCode == 429 then
+		-- Compatibility Method
+		local CompatibilityModeRequest = request({
+			Url = data_link,
+			Method = "GET",
+		})
+		if CompatibilityModeRequest.StatusCode == 200 then
+			return CompatibilityModeRequest.Body
+		elseif CompatibilityModeRequest.StatusCode == 429 then
 			-- Too many requests
-		elseif DataResponse.StatusCode == 500 then
+		elseif CompatibilityModeRequest.StatusCode == 500 then
 			-- Internal Error
-		elseif DataResponse.StatusCode == 403 then
+		elseif CompatibilityModeRequest.StatusCode == 403 then
 			-- Unable to Access the Server
 		else
 			-- Unknown Error on Server
