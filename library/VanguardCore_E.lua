@@ -1,5 +1,11 @@
 -- VigenereCipher Module
 local VigenereCipher = {}
+VigenereCipher.__index = VigenereCipher
+
+function VigenereCipher:new()
+    local instance = setmetatable({}, VigenereCipher)
+    return instance
+end
 
 function VigenereCipher:stringToBytes(str)
     local bytes = {}
@@ -35,7 +41,7 @@ end
 
 function VigenereCipher:vigenereEncryptBytes(bytes, key)
     key = key:upper()
-    local keyBytes = VigenereCipher.stringToBytes(key)
+    local keyBytes = self:stringToBytes(key)
     local encryptedBytes = {}
     for i = 1, #bytes do
         local byte = bytes[i]
@@ -47,7 +53,7 @@ end
 
 function VigenereCipher:vigenereDecryptBytes(bytes, key)
     key = key:upper()
-    local keyBytes = VigenereCipher.stringToBytes(key)
+    local keyBytes = self:stringToBytes(key)
     local decryptedBytes = {}
     for i = 1, #bytes do
         local byte = bytes[i]
