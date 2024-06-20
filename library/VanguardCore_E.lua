@@ -1,7 +1,7 @@
 -- VigenereCipher Module
 local VigenereCipher = {}
 
-function VigenereCipher.stringToBytes(str)
+function VigenereCipher:stringToBytes(str)
     local bytes = {}
     for i = 1, #str do
         table.insert(bytes, string.byte(str, i))
@@ -9,7 +9,7 @@ function VigenereCipher.stringToBytes(str)
     return bytes
 end
 
-function VigenereCipher.bytesToString(bytes)
+function VigenereCipher:bytesToString(bytes)
     local chars = {}
     for i = 1, #bytes do
         table.insert(chars, string.char(bytes[i]))
@@ -17,7 +17,7 @@ function VigenereCipher.bytesToString(bytes)
     return table.concat(chars)
 end
 
-function VigenereCipher.bytesToHex(bytes)
+function VigenereCipher:bytesToHex(bytes)
     local hex = {}
     for i = 1, #bytes do
         table.insert(hex, string.format("%02x", bytes[i]))
@@ -25,7 +25,7 @@ function VigenereCipher.bytesToHex(bytes)
     return table.concat(hex)
 end
 
-function VigenereCipher.hexToBytes(hex)
+function VigenereCipher:hexToBytes(hex)
     local bytes = {}
     for i = 1, #hex, 2 do
         table.insert(bytes, tonumber(hex:sub(i, i+1), 16))
@@ -33,7 +33,7 @@ function VigenereCipher.hexToBytes(hex)
     return bytes
 end
 
-function VigenereCipher.vigenereEncryptBytes(bytes, key)
+function VigenereCipher:vigenereEncryptBytes(bytes, key)
     key = key:upper()
     local keyBytes = VigenereCipher.stringToBytes(key)
     local encryptedBytes = {}
@@ -45,7 +45,7 @@ function VigenereCipher.vigenereEncryptBytes(bytes, key)
     return encryptedBytes
 end
 
-function VigenereCipher.vigenereDecryptBytes(bytes, key)
+function VigenereCipher:vigenereDecryptBytes(bytes, key)
     key = key:upper()
     local keyBytes = VigenereCipher.stringToBytes(key)
     local decryptedBytes = {}
