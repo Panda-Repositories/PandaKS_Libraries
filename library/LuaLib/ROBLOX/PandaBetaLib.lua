@@ -216,7 +216,7 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
         end
     )
     if success and data["V2_Authentication"] == "success" then
-		AutomaticHTTPExec(serviceID)
+		-- AutomaticHTTPExec(serviceID)
         return true
     end
     return false
@@ -248,7 +248,7 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
         end
     )
     if success and data["V2_Authentication"] == "success" and data["Key_Information"]["Premium_Mode"] == true then
-		AutomaticHTTPExec(serviceID)
+		-- AutomaticHTTPExec(serviceID)
         return true
     end
     return false
