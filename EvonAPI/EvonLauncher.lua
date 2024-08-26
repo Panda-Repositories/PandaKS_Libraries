@@ -1374,7 +1374,7 @@ coroutine.wrap(XIMTLIX_fake_script)()
 local function WAFF_fake_script() -- Controls.ControlHandler 
 	local script = Instance.new('LocalScript', Controls)
 
-	print("Hello world!")
+	-- print("Hello world!")
 	
 end
 coroutine.wrap(WAFF_fake_script)()
@@ -2066,6 +2066,7 @@ local function XTEHCQV_fake_script() -- KeySystem.KeySysHandler
 	local controls = script.Parent.Parent.Controls
 	
 	pasteKey.MouseButton1Click:Connect(function() 
+		warn("Testing")
 		textBox.Text = getclipboard() -- getclipboard()
 	end)
 	
@@ -2077,6 +2078,8 @@ local function XTEHCQV_fake_script() -- KeySystem.KeySysHandler
 	
 	getKey.MouseButton1Click:Connect(function()
 		-- setclipboard(pandaAuth:GetLink(service))
+		print("Successfully Obtained Key")
+        setclipboard(Generate_Key())
 		textBox.PlaceholderText = "Link Copied to Clipboard"
 	end)
 end
@@ -2089,6 +2092,7 @@ local function RVCNVIN_fake_script() -- GetKey.LocalScript
 	
 	-- Function to handle button click
 	local function GetKeyEvon()
+		print("Successfully Obtained Key")
         setclipboard(Generate_Key())
 	end
 	
