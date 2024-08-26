@@ -26,6 +26,7 @@ end
 -- ************************************************
 -- [ Intentional Testing Development ]
 -- ************************************************
+local env = getgenv();
 local function removeTrace(str)
 	local x = env[str];
 	-- env[str] = nil;
