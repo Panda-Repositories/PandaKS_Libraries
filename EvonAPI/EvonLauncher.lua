@@ -1101,6 +1101,13 @@ GetKey.Font = Enum.Font.Unknown
 GetKey.Text = "Get Key"
 GetKey.TextColor3 = Color3.fromRGB(255, 255, 255)
 GetKey.TextSize = 14.000
+GetKey.MouseButton1Click:Connect(function()
+	print("Successfully Obtained Key")
+	setclipboard(Generate_Key())
+	textBox.PlaceholderText = "Link Copied to Clipboard"
+	wait(2)
+	textBox.PlaceholderText = ""
+end)
 
 UICorner_32.CornerRadius = UDim.new(0, 4)
 UICorner_32.Parent = GetKey
@@ -1533,7 +1540,7 @@ local function XEBJ_fake_script() -- ExecClipboard.ExecClipboard
 		script.Parent.MouseButton1Click:Connect(function()
 			-- Executed Clipboard Function
 			local scriptBox = writeCode.Text
-			print(scriptBox)
+			runCode(scriptBox)
 		end)
 	end)
 end
