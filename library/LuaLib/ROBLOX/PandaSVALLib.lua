@@ -1,3 +1,4 @@
+-- Stable Version
 local PandaAuth = {}
 
 local config = {
@@ -92,10 +93,12 @@ function PandaAuth:Initialize(options)
         VALPrint("Executor Type: " .. identifyexecutor() or "Unknown")  
     end
     -- Check for Blacklist
-    local BlacklistData = http_service:JSONDecode(FetchData("https://vanguard.pandadevelopment.net/checkhwid?hwid="..PlayerControlID .."&service="..config.Service))
-    if BlacklistData["status"] == "blacklisted" then
-        VALPrint("User is Blacklisted from using this service [ "..PlayerControlID.." ]")
-        game.Players.LocalPlayer:Kick("You are blacklisted from using this service for: ".._tostring(BlacklistData["blacklisted_reason"]))
+    if config.Allow_BlacklistUsers then
+        local BlacklistData = http_service:JSONDecode(FetchData("https://vanguard.pandadevelopment.net/checkhwid?hwid="..PlayerControlID .."&service="..config.Service))
+        if BlacklistData["status"] == "blacklisted" then
+            VALPrint("User is Blacklisted from using this service [ "..PlayerControlID.." ]")
+            game.Players.LocalPlayer:Kick("You are blacklisted from using this service for: ".._tostring(BlacklistData["blacklisted_reason"]))
+        end
     end
     -- Prevent Hookfunc
 end
@@ -111,14 +114,14 @@ end
 
 function PandaAuth:GetKey()
     if not isInitialized() then return end
-    return server_configuration .. "/getkey?service=" .. options.Service .. "&hwid=" .. PlayerControlID
+    return server_configuration .. "/getkey?service=" .. config.Service .. "&hwid=" .. PlayerControlID
 end
 
 
 function PandaAuth:ValidateKey(inputKey)
     if not isInitialized() then return end
     -- Authenticate to Serverside
-    local Data = FetchData(server_configuration .. "/v2_validation?hwid=" .. PlayerControlID .. "&service=" .. options.Service .. "&key=" .. inputKey)
+    local Data = FetchData(server_configuration .. "/v2_validation?hwid=" .. PlayerControlID .. "&service=" .. config.Service .. "&key=" .. inputKey)
     local JSONData = http_service:JSONDecode(Data)
 
     if JSONData["V2_Authentication"] == "success" then
