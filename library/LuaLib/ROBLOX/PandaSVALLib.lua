@@ -92,7 +92,7 @@ function PandaAuth:Initialize(options)
         VALPrint("Executor Type: " .. identifyexecutor() or "Unknown")  
     end
     -- Check for Blacklist
-    local BlacklistData = http_service:JSONDecode(FetchData("https://vanguard.pandadevelopment.net/checkhwid?hwid="..PlayerControlID "&service="..config.Service))
+    local BlacklistData = http_service:JSONDecode(FetchData("https://vanguard.pandadevelopment.net/checkhwid?hwid="..PlayerControlID .."&service="..config.Service))
     if BlacklistData["status"] == "blacklisted" then
         VALPrint("User is Blacklisted from using this service [ "..PlayerControlID.." ]")
         game.Players.LocalPlayer:Kick("You are blacklisted from using this service for: ".._tostring(BlacklistData["blacklisted_reason"]))
