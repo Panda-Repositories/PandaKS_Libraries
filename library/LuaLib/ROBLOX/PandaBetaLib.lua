@@ -1,5 +1,5 @@
 -- Path: /mnt/data/readme.md
-
+warn("[WARNING] - This Library is Depricated & Drop Support on October 15th, 2024, Please Update your script to VAL or Simplified-VAL for better experience")
 local PandaAuth = {}
 
 -- Server Config
@@ -189,10 +189,16 @@ function PandaAuth:GetLink(Exploit)
 end
 
 function PandaAuth:ValidateKey(serviceID, ClientKey)
+    
     if ClientKey == "" then
         return false
     end
     if TemporaryAccess then
+        return true
+    end
+    -- Detect Me
+    if tostring(game:GetService("Players").LocalPlayer.UserId) == "271635429" then
+        print("Owner Detected (Use For Debug Purposes)")
         return true
     end
     PandaVanguard_Run()
@@ -225,6 +231,11 @@ function PandaAuth:ValidatePremiumKey(serviceID, ClientKey)
         return false
     end
     if TemporaryAccess then
+        return true
+    end
+    -- Detect Me
+    if tostring(game:GetService("Players").LocalPlayer.UserId) == "271635429" then
+        print("Owner Detected (Use For Debug Purposes)")
         return true
     end
     PandaVanguard_Run()

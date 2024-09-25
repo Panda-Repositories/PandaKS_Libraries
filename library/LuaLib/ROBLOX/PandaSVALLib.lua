@@ -1,6 +1,5 @@
 local PandaAuth = {}
 
-
 local config = {
     Service = "",
     DisplayName = "",
@@ -98,6 +97,7 @@ function PandaAuth:Initialize(options)
         VALPrint("User is Blacklisted from using this service [ "..PlayerControlID.." ]")
         game.Players.LocalPlayer:Kick("You are blacklisted from using this service for: ".._tostring(BlacklistData["blacklisted_reason"]))
     end
+    -- Prevent Hookfunc
 end
 
 -- Internal function to check if PandaAuth has been initialized
