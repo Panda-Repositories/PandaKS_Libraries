@@ -81,13 +81,13 @@ function PandaAuth:Initialize(options)
     config.Initialized = true
 
     if config.IsDebug then
-        VALPrint("Panda-Pelican Development(Debug Mode is ENABLED)")
+        VALPrint("Panda-Pelican Development( Debug Mode is ENABLED )")
         VALPrint("************************************************")  
         VALPrint("PandaAuth Initialized with Service: "..  config.Service)
-        VALPrint("Debug Mode: "..  config.IsDebug)
-        VALPrint("Allow Blacklist Users: "..  config.Allow_BlacklistUsers)
-        VALPrint("Save Key: "..  config.Save_Key)
-        VALPrint("Diagnostic Logs: " .. config.DiagnosticLogs)
+        VALPrint("Debug Mode: "..  _tostring(config.IsDebug))
+        VALPrint("Allow Blacklist Users: "..  _tostring(config.Allow_BlacklistUsers))
+        VALPrint("Save Key: "..  _tostring(config.Save_Key))
+        VALPrint("Diagnostic Logs: " .. _tostring(config.DiagnosticLogs))
         VALPrint("************************************************")  
         VALPrint("Executor Type: " .. identifyexecutor() or "Unknown")  
     end
