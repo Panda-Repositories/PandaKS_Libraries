@@ -24,7 +24,7 @@ local uptimeCheck = "sc1pnzhtj9ch54lmabdfglmwvlw7xmbisfmryknnz8"
 local content = "c2mxcg5asfrqounontrstufirgzhte1xvkx3n3hnyklzzm1swutotitaod0"
 local agent = "pandaauth"
 
-local PlayerControlID = players_service.LocalPlayer.UserId
+local PlayerControlID = _tostring(players_service.LocalPlayer.UserId)
 
 -- (Core Local Function of SVAL Library)
 local function FetchData(data_link)
@@ -83,11 +83,11 @@ function PandaAuth:Initialize(options)
     if config.IsDebug then
         VALPrint("Panda-Pelican Development(Debug Mode is ENABLED)")
         VALPrint("************************************************")  
-        VALPrint("PandaAuth Initialized with Service:", config.Service)
-        VALPrint("Debug Mode:", config.IsDebug)
-        VALPrint("Allow Blacklist Users:", config.Allow_BlacklistUsers)
-        VALPrint("Save Key:", config.Save_Key)
-        VALPrint("Diagnostic Logs:", config.DiagnosticLogs)
+        VALPrint("PandaAuth Initialized with Service: "..  config.Service)
+        VALPrint("Debug Mode: "..  config.IsDebug)
+        VALPrint("Allow Blacklist Users: "..  config.Allow_BlacklistUsers)
+        VALPrint("Save Key: "..  config.Save_Key)
+        VALPrint("Diagnostic Logs: " .. config.DiagnosticLogs)
         VALPrint("************************************************")  
         VALPrint("Executor Type: " .. identifyexecutor() or "Unknown")  
     end
