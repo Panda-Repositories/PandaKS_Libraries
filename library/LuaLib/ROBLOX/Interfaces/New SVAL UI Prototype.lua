@@ -161,4 +161,4 @@ TextLabel_2.TextSize = 15.000
 UICorner_4.CornerRadius = UDim.new(0, 4)
 UICorner_4.Parent = Frame
 
-return ScreenGui, TextBox, Login, GetKey
+return ScreenGui, TextBox, Login, GetKey, TextLabel_2
