@@ -3,7 +3,14 @@
 
 -- Instances:
 
+if getgenv().SVALGuiSelfDestroy then getgenv().SVALGuiSelfDestroy() end
+
 local ScreenGui = Instance.new("ScreenGui")
+
+getgenv().SVALGuiSelfDestroy = function()
+    ScreenGui:Destroy()
+end
+
 local Frame = Instance.new("Frame")
 local DropShadowHolder = Instance.new("Frame")
 local DropShadow = Instance.new("ImageLabel")
