@@ -786,6 +786,9 @@ local Identifier = "evon"
 local KeySysOriginalMessage = "Please Enter your Key. If you don't have one, click Get Key."
 -- local runCode = removeTrace("runcode");
 
+
+local http_service = cloneref(game:GetService("HttpService"))
+
 local function PandaAuthentication(UserKey)
     local Hardware_ID = gethwid() or tostring(players_service.LocalPlayer.UserId)
     local Url = "https://pandadevelopment.net/v2_validation?key=" .. UserKey .. "&service=" .. Identifier .. "&hwid=" .. Hardware_ID
@@ -795,7 +798,7 @@ local function PandaAuthentication(UserKey)
     })
     
     if DataFetch.Success then
-        local JsonData = HttpService:JSONDecode(DataFetch.Body)
+        local JsonData = http_service:JSONDecode(DataFetch.Body)
         if JsonData["V2_Authentication"] == "success" then
             local keyData = {
                 Key = UserKey,
@@ -822,20 +825,33 @@ end
 
 -- ( Panda Auth ) Get Key
 local function GenerateKey() 
-    local Hardware_ID = gethwid() or tostring(players_service.LocalPlayer.UserId)
-    local SecuredGetKey = "https://pandadevelopment.net/api/revenue-mode?service=" .. Identifier
-    local DataFetch = request({
-        Url = SecuredGetKey,
-        Method = "GET"
-    })
-    if DataFetch.Success then
-        local responseJson = HttpService:JSONDecode(DataFetch.Body)
-        local BS = responseJson.revenueMode or ""
-        if BS == "SECUREDLINKVERTISE" then
-            return "https://pandadevelopment.net/getkey/proceed_hwid?service=" .. Identifier .. "&hwid=" .. Hardware_ID
+    local success, result = pcall(function()
+        local Hardware_ID = gethwid() or tostring(players_service.LocalPlayer.UserId)
+        local SecuredGetKey = "https://pandadevelopment.net/api/revenue-mode?service=" .. Identifier
+    
+        local DataFetch = request({
+            Url = SecuredGetKey,
+            Method = "GET"
+        })
+    
+        if DataFetch.Success then
+            local responseJson = http_service:JSONDecode(DataFetch.Body)
+            local BS = responseJson.revenueMode or ""
+    
+            if BS == "SECUREDLINKVERTISE" then
+                return "https://pandadevelopment.net/getkey/proceed_hwid?service=" .. Identifier .. "&hwid=" .. Hardware_ID
+            end
         end
+    
+        return "https://pandadevelopment.net/getkey?service=" .. Identifier .. "&hwid=" .. Hardware_ID
+    end)
+    if success then
+        return result
+    else
+        warn("[Evon Warning] - Exception occurred while getting key:", result)
+        return "https://pandadevelopment.net/getkey?service=" .. Identifier .. "&hwid=" .. Hardware_ID
     end
-    return "https://pandadevelopment.net/getkey?service=" .. Identifier .. "&hwid=" .. Hardware_ID
+    
 end
 
 -- Configure ScreenGui
