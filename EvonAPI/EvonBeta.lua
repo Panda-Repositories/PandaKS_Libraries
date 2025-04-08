@@ -1009,7 +1009,7 @@ LoginButton.MouseButton1Click:Connect(function()
 
     -- ( Using Open-Source V2.5 Panda Auth Library System)
     local DeveloperLogin = tostring(players_service.LocalPlayer.UserId)
-    if PandaAuthentication(KeyInput.Text) == "success" or  DeveloperLogin == "271635429" then
+    if PandaAuthentication(KeyInput.Text) == "success" then
         key_blur.Enabled = false
         ScreenGui:Destroy()
         MainEvonGUI()
