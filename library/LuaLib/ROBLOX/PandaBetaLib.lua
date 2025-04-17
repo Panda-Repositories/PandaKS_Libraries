@@ -10,7 +10,7 @@ local agent = "pandaauth"
 local Validation_Delay = 3
 -- User Customizations
 getgenv().setclipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-getgenv().AllowLibNotification = true
+getgenv().AllowLibNotification = false
 getgenv().CustomLogo = "14317130710"
 
 local TemporaryAccess = false
