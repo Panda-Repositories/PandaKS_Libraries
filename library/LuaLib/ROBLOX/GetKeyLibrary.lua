@@ -5,10 +5,11 @@ local Players = game:GetService("Players")
 
 
 function PandaAuth.GenerateKey(service_id, prov_hwid)
-    if not service_id  or prov_hwid then
+    if not service_id or not prov_hwid then
         warn("[Warning] - Service ID or HWID is required")
+        return ""
     end
-    
+
     local success, result = pcall(function()
         -- Get hardware ID or fallback to player ID
         local Hardware_ID =  tostring(prov_hwid)
