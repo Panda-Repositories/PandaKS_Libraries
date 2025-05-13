@@ -312,40 +312,12 @@ end
 local function getUserAgent()
     -- Try HttpGet first
     local success, response = pcall(function()
-        return game:HttpGet("https://httpbin.org/get")
+        return game:HttpGet("https://pandadevelopment.net/agentinfo/getagentinfo")
     end)
     
     if success then
-        local parseSuccess, jsonData = pcall(function()
-            return game:GetService("HttpService"):JSONDecode(response)
-        end)
-        
-        if parseSuccess and jsonData and jsonData.headers and jsonData.headers["User-Agent"] then
-            return jsonData.headers["User-Agent"], true
-        end
+        return response, true
     end
-    
-    -- Try using request function if available
-    if request then
-        local reqSuccess, reqResponse = pcall(function()
-            return request({
-                Url = "https://httpbin.org/get",
-                Method = "GET"
-            })
-        end)
-        
-        if reqSuccess and reqResponse and reqResponse.Body then
-            local reqParseSuccess, reqJsonData = pcall(function()
-                return game:GetService("HttpService"):JSONDecode(reqResponse.Body)
-            end)
-            
-            if reqParseSuccess and reqJsonData and reqJsonData.headers and reqJsonData.headers["User-Agent"] then
-                return reqJsonData.headers["User-Agent"], true
-            end
-        end
-    end
-    
-    -- Fall back to executor name
     return "Unknown (using executor: " .. identifyexecutor() .. ")", false
 end
 
