@@ -597,7 +597,7 @@ end
 
 -- Main verification logic
 if Verification_Status ~= nil then
-    if VerifiedStatus == 2 and SlugID ~= nil then
+    if Verification_Status == 2 and SlugID ~= nil then
         -- This will attempt to run the script in POST-Mode
         logToConsole("INFO", "Attempting POST-Mode script execution")
         logToConsole("DEBUG", "SlugID: " .. SlugID)
@@ -696,16 +696,16 @@ if Verification_Status ~= nil then
             logToConsole("DEBUG", "Response body: " .. tostring(DataFetch.Body))
             KickScript(errorMsg)
         end
-    elseif VerifiedStatus == 4 then
+    elseif Verification_Status == 4 then
         -- Script Not Found
         logToConsole("ERROR", "Script not found on server (Status: 4)")
         KickScript("The Following Script isn't found on the Server or it was already deleted")
-    elseif VerifiedStatus == 3 then
+    elseif Verification_Status == 3 then
         -- User had to Execute the GET-Mode before POST-Mode
         logToConsole("ERROR", "Integrity check failed (Status: 3)")
         KickScript("Failed to Verify Script-Integrity, Please Run the Script again, Make sure you're using loadstring")
     else
-        logToConsole("ERROR", "Invalid verification status: " .. tostring(VerifiedStatus))
+        logToConsole("ERROR", "Invalid verification status: " .. tostring(Verification_Status))
         KickScript("Missing Parameter / Invalid Verification Status")
     end
 else
