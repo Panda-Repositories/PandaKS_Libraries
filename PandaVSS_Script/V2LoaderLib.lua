@@ -1,9 +1,7 @@
 local HttpService = game:GetService("HttpService")
 local ENDPOINT  = "https://secure.pandauth.com/v2_validation"
-local GETKEY    = "https://pandauth.com/getkey"
+local GETKEY    = "https://ads.pandauth.com/getkey"
 local SERVICE   = "YOUR_SERVICE_ID"
-
-_G.PandaVersion = "2.0.5_Legacy_May2026"
 
 local httpRequest = (syn and syn.request) or http_request or request
 local clipboard   = setclipboard or toclipboard
@@ -42,7 +40,7 @@ function PandaV2.Validate(key, requirePremium)
 end
 
 function PandaV2.GetKey()
-    local url = ("%s?service=%s&hwid=%s"):format(GETKEY, SERVICE, getHWID())
+    local url = ("%s/%s"):format(GETKEY, SERVICE)
     if clipboard then clipboard(url) end
     return url
 end
