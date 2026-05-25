@@ -40,7 +40,7 @@ function PandaV2.Validate(key, requirePremium)
 end
 
 function PandaV2.GetKey()
-    local url = ("%s/%s"):format(GETKEY, SERVICE)
+    local url = ("%s/%s?hwid=%s"):format(GETKEY, SERVICE, getHWID())
     if clipboard then clipboard(url) end
     return url
 end
